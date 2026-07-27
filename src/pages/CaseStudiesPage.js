@@ -147,7 +147,7 @@ const CaseStudiesPage = () => {
   const fetchCaseStudies = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/case-studies`);
+      const response = await axios.get(`/case-studies`);
       if (response.data.data.length > 0) {
         setCaseStudies(response.data.data);
       } else {

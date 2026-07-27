@@ -89,7 +89,7 @@ const ContactPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/inquiries`, formData);
+      await axios.post(`/inquiries`, formData);
       setSubmitStatus('success');
       setFormData({
         name: '', email: '', phone: '', company: '', budget: '', service: '', message: '', freeConsultingCall: false, preferredDateTime: ''

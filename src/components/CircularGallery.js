@@ -612,7 +612,7 @@ export default function CircularGallery({
           }
           return;
         }
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/gallery-videos`);
+        const response = await axios.get(`/gallery-videos`);
         if (response.data.success && isMounted) {
           const mapped = response.data.data.map(v => ({ video: v.videoUrl, text: v.title }));
           setGalleryItems(mapped);

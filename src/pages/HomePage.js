@@ -157,7 +157,7 @@ const HomePage = () => {
 
   const fetchTeam = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/team`);
+      const response = await axios.get(`/team`);
       if (response.data.data && response.data.data.length > 0) {
         setTeam(response.data.data);
       } else {

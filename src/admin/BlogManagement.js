@@ -41,7 +41,7 @@ const BlogManagement = () => {
   const fetchBlogs = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/admin/all`, {
+      const response = await axios.get(`/blogs/admin/all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBlogs(response.data.data);
@@ -58,11 +58,11 @@ const BlogManagement = () => {
       const token = localStorage.getItem('adminToken');
       
       if (editingBlog) {
-        await axios.put(`${process.env.REACT_APP_API_URL}/blogs/${editingBlog._id}`, formData, {
+        await axios.put(`/blogs/${editingBlog._id}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post(`${process.env.REACT_APP_API_URL}/blogs`, formData, {
+        await axios.post(`/blogs`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -83,7 +83,7 @@ const BlogManagement = () => {
     if (window.confirm('Are you sure you want to delete this blog?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`${process.env.REACT_APP_API_URL}/blogs/${id}`, {
+        await axios.delete(`/blogs/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchBlogs();
@@ -149,7 +149,7 @@ const BlogManagement = () => {
     
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/media`, uploadFormData, {
+      const response = await axios.post(`/media`, uploadFormData, {
         headers: { 
           Authorization: `Bearer ${token}`
         }

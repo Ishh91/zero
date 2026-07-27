@@ -21,7 +21,7 @@ const SiteSettingsManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/site-settings`, {
+      const response = await axios.get(`/site-settings`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -46,7 +46,7 @@ const SiteSettingsManagement = () => {
     setSaving(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/site-settings`, submitData, {
+      const response = await axios.put(`/site-settings`, submitData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {

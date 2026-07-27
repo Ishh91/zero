@@ -128,7 +128,7 @@ const WorkPage = () => {
   const fetchPortfolio = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio?category=${activeCategory}`);
+      const response = await axios.get(`/portfolio?category=${activeCategory}`);
       setPortfolio(response.data.data);
     } catch (error) {
       console.error('Error fetching portfolio:', error);

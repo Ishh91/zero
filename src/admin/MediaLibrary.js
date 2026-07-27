@@ -17,7 +17,7 @@ const MediaLibrary = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/media`, {
+      const response = await axios.get(`/media`, {
         params: { type: filter },
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -38,7 +38,7 @@ const MediaLibrary = () => {
     setUploading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.post(`${process.env.REACT_APP_API_URL}/media`, formData, {
+      await axios.post(`/media`, formData, {
         headers: { 
           Authorization: `Bearer ${token}`
         }
@@ -58,7 +58,7 @@ const MediaLibrary = () => {
     if (window.confirm('Are you sure you want to delete this media?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`${process.env.REACT_APP_API_URL}/media/${id}`, {
+        await axios.delete(`/media/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchMedia();

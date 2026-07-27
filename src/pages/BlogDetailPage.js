@@ -76,11 +76,11 @@ const BlogDetailPage = () => {
   const fetchBlog = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/${slug}`);
+      const response = await axios.get(`/blogs/${slug}`);
       setBlog(response.data.data);
       
       // Fetch related blogs
-      const relatedResponse = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`, {
+      const relatedResponse = await axios.get(`/blogs`, {
         params: { category: response.data.data.category, limit: 3 }
       });
       setRelatedBlogs(relatedResponse.data.data.filter(b => b.slug !== slug));

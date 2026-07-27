@@ -55,7 +55,7 @@ const CaseStudyManagement = () => {
   const fetchCaseStudies = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/case-studies/admin/all`, {
+      const response = await axios.get(`/case-studies/admin/all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCaseStudies(response.data.data);
@@ -72,11 +72,11 @@ const CaseStudyManagement = () => {
       const token = localStorage.getItem('adminToken');
       
       if (editingCaseStudy) {
-        await axios.put(`${process.env.REACT_APP_API_URL}/case-studies/${editingCaseStudy._id}`, formData, {
+        await axios.put(`/case-studies/${editingCaseStudy._id}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post(`${process.env.REACT_APP_API_URL}/case-studies`, formData, {
+        await axios.post(`/case-studies`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -97,7 +97,7 @@ const CaseStudyManagement = () => {
     if (window.confirm('Are you sure you want to delete this case study?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`${process.env.REACT_APP_API_URL}/case-studies/${id}`, {
+        await axios.delete(`/case-studies/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchCaseStudies();
@@ -201,7 +201,7 @@ const CaseStudyManagement = () => {
     
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/media`, uploadFormData, {
+      const response = await axios.post(`/media`, uploadFormData, {
         headers: { 
           Authorization: `Bearer ${token}`
         }

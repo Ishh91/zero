@@ -16,7 +16,7 @@ const AdminLogin = ({ setIsAuthenticated }) => {
     setError('');
     
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, {
+      const response = await axios.post(`/auth/login`, {
         email,
         password
       });

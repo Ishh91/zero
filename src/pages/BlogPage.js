@@ -82,7 +82,7 @@ const BlogPage = () => {
   const fetchBlogs = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs`, {
+      const response = await axios.get(`/blogs`, {
         params: { page: currentPage, category: selectedCategory === 'all' ? null : selectedCategory }
       });
       setBlogs(response.data.data);
@@ -96,7 +96,7 @@ const BlogPage = () => {
 
   const fetchFeaturedBlogs = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/blogs/featured`);
+      const response = await axios.get(`/blogs/featured`);
       setFeaturedBlogs(response.data.data);
     } catch (error) {
       console.error('Error fetching featured blogs:', error);

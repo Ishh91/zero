@@ -15,7 +15,7 @@ const InquiryManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/inquiries`, {
+      const response = await axios.get(`/inquiries`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setInquiries(response.data.data);
@@ -29,7 +29,7 @@ const InquiryManagement = () => {
   const updateStatus = async (id, status) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`${process.env.REACT_APP_API_URL}/inquiries/${id}/status`, 
+      await axios.put(`/inquiries/${id}/status`, 
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

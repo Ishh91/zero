@@ -39,7 +39,7 @@ const PersonalBrandingManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/personal-branding`, {
+      const response = await axios.get(`/personal-branding`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPersonalBrandings(response.data.data);
@@ -65,13 +65,13 @@ const PersonalBrandingManagement = () => {
       let response;
       
       if (editingItem) {
-        response = await axios.put(`${process.env.REACT_APP_API_URL}/personal-branding/${editingItem._id}`, submitData, {
+        response = await axios.put(`/personal-branding/${editingItem._id}`, submitData, {
           headers: { 
             Authorization: `Bearer ${token}`
           }
         });
       } else {
-        response = await axios.post(`${process.env.REACT_APP_API_URL}/personal-branding`, submitData, {
+        response = await axios.post(`/personal-branding`, submitData, {
           headers: { 
             Authorization: `Bearer ${token}`
           }
@@ -96,7 +96,7 @@ const PersonalBrandingManagement = () => {
     if (window.confirm('Are you sure you want to delete this personal branding?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`${process.env.REACT_APP_API_URL}/personal-branding/${id}`, {
+        await axios.delete(`/personal-branding/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchPersonalBrandings();

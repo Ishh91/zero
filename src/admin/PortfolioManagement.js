@@ -37,7 +37,7 @@ const PortfolioManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio`, {
+      const response = await axios.get(`/portfolio`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPortfolio(response.data.data);
@@ -83,9 +83,9 @@ const PortfolioManagement = () => {
       
       let response;
       if (editingItem) {
-        response = await axios.put(`${process.env.REACT_APP_API_URL}/portfolio/${editingItem._id}`, submitData, config);
+        response = await axios.put(`/portfolio/${editingItem._id}`, submitData, config);
       } else {
-        response = await axios.post(`${process.env.REACT_APP_API_URL}/portfolio`, submitData, config);
+        response = await axios.post(`/portfolio`, submitData, config);
       }
       
       if (response.data.success) {
@@ -107,7 +107,7 @@ const PortfolioManagement = () => {
     if (window.confirm('Are you sure you want to delete this portfolio item?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`${process.env.REACT_APP_API_URL}/portfolio/${id}`, {
+        await axios.delete(`/portfolio/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchPortfolio();

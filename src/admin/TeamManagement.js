@@ -33,7 +33,7 @@ const TeamManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/team`, {
+      const response = await axios.get(`/team`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTeam(response.data.data);
@@ -59,13 +59,13 @@ const TeamManagement = () => {
       let response;
       
       if (editingMember) {
-        response = await axios.put(`${process.env.REACT_APP_API_URL}/team/${editingMember._id}`, submitData, {
+        response = await axios.put(`/team/${editingMember._id}`, submitData, {
           headers: { 
             Authorization: `Bearer ${token}`
           }
         });
       } else {
-        response = await axios.post(`${process.env.REACT_APP_API_URL}/team`, submitData, {
+        response = await axios.post(`/team`, submitData, {
           headers: { 
             Authorization: `Bearer ${token}`
           }
@@ -90,7 +90,7 @@ const TeamManagement = () => {
     if (window.confirm('Are you sure you want to delete this team member?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`${process.env.REACT_APP_API_URL}/team/${id}`, {
+        await axios.delete(`/team/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchTeam();

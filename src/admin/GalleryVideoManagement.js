@@ -24,7 +24,7 @@ const GalleryVideoManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/gallery-videos/admin`, {
+      const response = await axios.get(`/gallery-videos/admin`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -50,11 +50,11 @@ const GalleryVideoManagement = () => {
       const token = localStorage.getItem('adminToken');
       let response;
       if (editingItem) {
-        response = await axios.put(`${process.env.REACT_APP_API_URL}/gallery-videos/${editingItem._id}`, submitData, {
+        response = await axios.put(`/gallery-videos/${editingItem._id}`, submitData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        response = await axios.post(`${process.env.REACT_APP_API_URL}/gallery-videos`, submitData, {
+        response = await axios.post(`/gallery-videos`, submitData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -76,7 +76,7 @@ const GalleryVideoManagement = () => {
     if (window.confirm('Are you sure you want to delete this gallery video?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`${process.env.REACT_APP_API_URL}/gallery-videos/${id}`, {
+        await axios.delete(`/gallery-videos/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchVideos();
