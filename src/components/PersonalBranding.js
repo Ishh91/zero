@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import SectionParticleBackground from './SectionParticleBackground';
+import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './PersonalBranding.css';
 
 const PersonalBranding = () => {
@@ -164,7 +165,7 @@ const PersonalBranding = () => {
   };
 
   const handleImageError = (e) => {
-    e.target.src = 'https://via.placeholder.com/400x400/ff9933/ffffff?text=User';
+    e.target.src = PLACEHOLDER_IMAGE;
   };
 
   return (

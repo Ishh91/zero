@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
 const GalleryVideoManagement = () => {
@@ -137,7 +138,7 @@ const GalleryVideoManagement = () => {
                 {item.videoUrl ? (
                   <video src={item.videoUrl} muted loop />
                 ) : (
-                  <img src="/api/placeholder/200/200" alt={item.title} />
+                  <img src={PLACEHOLDER_IMAGE} alt={item.title} />
                 )}
               </div>
               <div className="personal-branding-info">

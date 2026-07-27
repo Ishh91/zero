@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import Floating3D from '../components/Floating3D';
+import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './BlogPage.css';
 import '../pages/ServiceDetail.css';
 
@@ -145,7 +146,7 @@ const BlogPage = () => {
                 >
                   <Link to={`/blog/${blog.slug}`}>
                     <div className="featured-image">
-                      <img src={blog.featuredImage || '/api/placeholder/800/500'} alt={blog.title} />
+                      <img src={blog.featuredImage || PLACEHOLDER_IMAGE} alt={blog.title} />
                       <span className="featured-badge">Featured</span>
                     </div>
                     <div className="featured-content">
@@ -215,7 +216,7 @@ const BlogPage = () => {
                   >
                     <Link to={`/blog/${blog.slug}`}>
                       <div className="blog-image">
-                        <img src={blog.featuredImage || '/api/placeholder/600/400'} alt={blog.title} />
+                        <img src={blog.featuredImage || PLACEHOLDER_IMAGE} alt={blog.title} />
                       </div>
                       <div className="blog-content">
                         <span className="blog-category">{blog.category}</span>

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import Floating3D from '../components/Floating3D';
+import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './BlogDetailPage.css';
 
 const BlogDetailPage = () => {
@@ -204,7 +205,7 @@ const BlogDetailPage = () => {
                 {relatedBlogs.map((related, index) => (
                   <Link to={`/blog/${related.slug}`} key={related._id} className="related-card">
                     <motion.div variants={itemVariants} className="related-image">
-                      <img src={related.featuredImage || '/api/placeholder/400/250'} alt={related.title} />
+                      <img src={related.featuredImage || PLACEHOLDER_IMAGE} alt={related.title} />
                     </motion.div>
                     <motion.div variants={itemVariants} className="related-content">
                       <span className="related-category">{related.category}</span>

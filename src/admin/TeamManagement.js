@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
 const TeamManagement = () => {
@@ -170,7 +171,7 @@ const TeamManagement = () => {
           {team.map(member => (
             <div key={member._id} className="team-admin-card">
               <div className="team-admin-image">
-                <img src={member.imageUrl || '/api/placeholder/200/200'} alt={member.name} />
+                <img src={member.imageUrl || PLACEHOLDER_IMAGE} alt={member.name} />
               </div>
               <div className="team-admin-info">
                 <h4>{member.name}</h4>

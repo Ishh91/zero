@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
 const PersonalBrandingManagement = () => {
@@ -189,7 +190,7 @@ const PersonalBrandingManagement = () => {
           {personalBrandings.map(item => (
             <div key={item._id} className="personal-branding-card">
               <div className="personal-branding-avatar">
-                <img src={item.avatarUrl || '/api/placeholder/200/200'} alt={item.name} />
+                <img src={item.avatarUrl || PLACEHOLDER_IMAGE} alt={item.name} />
               </div>
               <div className="personal-branding-info">
                 <h4>{item.name}</h4>
