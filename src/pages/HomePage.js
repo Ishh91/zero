@@ -440,9 +440,7 @@ const HomePage = () => {
             variants={containerVariants}
             className="closing-cta-header"
           >
-            <motion.div variants={itemVariants} className="reel-badge">
-              <span>Closing CTA</span>
-            </motion.div>
+           
             
             <motion.h2 variants={titleVariants} className="section-title">
              <span className="highlight-word">Your brand is still at</span> <span className="highlight-word-3">ZERO</span> <span className="highlight-word"> Let's change that</span>

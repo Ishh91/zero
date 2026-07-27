@@ -289,18 +289,57 @@ class Media {
 
     if (this.video) {
       const videoEl = document.createElement('video');
-      videoEl.src = this.video;
+      const cacheBuster = (this.video.indexOf('?') === -1 ? '?' : '&') + '_v=' + Date.now() + '_' + this.index;
+      const useCacheBust = !this.video.startsWith('blob:') && !this.video.startsWith('data:');
+      videoEl.src = useCacheBust ? (this.video + cacheBuster) : this.video;
       videoEl.crossOrigin = 'anonymous';
       videoEl.loop = true;
       videoEl.muted = true;
       videoEl.playsInline = true;
-      videoEl.preload = 'auto';
+      videoEl.preload = 'metadata';
+      videoEl.setAttribute('webkit-playsinline', 'true');
       this.videoElement = videoEl;
-      
+
+      let loaded = false;
       videoEl.addEventListener('loadedmetadata', () => {
-        this.program.uniforms.uImageSizes.value = [videoEl.videoWidth, videoEl.videoHeight];
+        if (loaded) return;
+        loaded = true;
+        if (!videoEl.videoWidth || !videoEl.videoHeight) {
+          this.program.uniforms.uImageSizes.value = [1280, 720];
+        } else {
+          this.program.uniforms.uImageSizes.value = [videoEl.videoWidth, videoEl.videoHeight];
+        }
         texture.image = videoEl;
-        videoEl.play().catch(() => {});
+        const p = videoEl.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      });
+      videoEl.addEventListener('error', (ev) => {
+        const err = videoEl.error;
+        if (err && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED)) {
+          if (useCacheBust && !this.video.includes('_retry=')) {
+            this.video = this.video + (this.video.indexOf('?') === -1 ? '?' : '&') + '_retry=1';
+            const retryEl = document.createElement('video');
+            retryEl.src = this.video;
+            retryEl.crossOrigin = 'anonymous';
+            retryEl.loop = true;
+            retryEl.muted = true;
+            retryEl.playsInline = true;
+            retryEl.preload = 'metadata';
+            retryEl.setAttribute('webkit-playsinline', 'true');
+            retryEl.addEventListener('loadedmetadata', () => {
+              if (!retryEl.videoWidth || !retryEl.videoHeight) {
+                this.program.uniforms.uImageSizes.value = [1280, 720];
+              } else {
+                this.program.uniforms.uImageSizes.value = [retryEl.videoWidth, retryEl.videoHeight];
+              }
+              texture.image = retryEl;
+              const p2 = retryEl.play();
+              if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
+            });
+            retryEl.addEventListener('error', () => { /* silent final */ });
+            this.videoElement = retryEl;
+          }
+        }
       });
     } else if (this.image) {
       const img = new Image();
