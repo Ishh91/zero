@@ -11,7 +11,10 @@ const AdminDashboard = () => {
     totalMedia: 0,
     totalTeam: 0,
     totalPortfolio: 0,
-    totalPersonalBranding: 0
+    totalPersonalBranding: 0,
+    totalGalleryVideos: 0,
+    totalCaseStudies: 0,
+    totalTestimonials: 0
   });
   const location = useLocation();
 
@@ -79,6 +82,9 @@ const AdminDashboard = () => {
           <Link to="/admin/gallery-videos" className={`nav-link ${isActive('/gallery-videos') ? 'active' : ''}`}>
             <i className="fas fa-film"></i> Gallery Videos
           </Link>
+          <Link to="/admin/testimonials" className={`nav-link ${isActive('/testimonials') ? 'active' : ''}`}>
+            <i className="fas fa-quote-left"></i> Testimonials
+          </Link>
         </nav>
         <button onClick={handleLogout} className="logout-btn">
           <i className="fas fa-sign-out-alt"></i> Logout
@@ -95,7 +101,9 @@ const AdminDashboard = () => {
                location.pathname.split('/').pop() === 'inquiries' ? 'Inquiry Management' :
                location.pathname.split('/').pop() === 'media' ? 'Media Library' :
                location.pathname.split('/').pop() === 'site-settings' ? 'Site Settings' :
-               location.pathname.split('/').pop() === 'gallery-videos' ? 'Gallery Videos Management' : 'Dashboard'}</h1>
+               location.pathname.split('/').pop() === 'gallery-videos' ? 'Gallery Videos Management' :
+               location.pathname.split('/').pop() === 'team' ? 'Team Management' :
+               location.pathname.split('/').pop() === 'testimonials' ? 'Testimonial Management' : 'Dashboard'}</h1>
         </div>
         
         {location.pathname === '/admin/dashboard' && (
@@ -147,6 +155,27 @@ const AdminDashboard = () => {
               <div className="stat-info">
                 <h3>{stats.totalPersonalBranding}</h3>
                 <p>Personal Branding</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon"><i className="fas fa-film"></i></div>
+              <div className="stat-info">
+                <h3>{stats.totalGalleryVideos}</h3>
+                <p>Gallery Videos</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon"><i className="fas fa-briefcase"></i></div>
+              <div className="stat-info">
+                <h3>{stats.totalCaseStudies}</h3>
+                <p>Case Studies</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon"><i className="fas fa-quote-left"></i></div>
+              <div className="stat-info">
+                <h3>{stats.totalTestimonials}</h3>
+                <p>Testimonials</p>
               </div>
             </div>
           </div>

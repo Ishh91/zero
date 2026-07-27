@@ -549,13 +549,16 @@
 .blog-form,
 .portfolio-form,
 .team-form,
-.personal-branding-form {
+.personal-branding-form,
+.testimonial-form {
   padding: 32px;
 }
 
 .blog-form .form-row,
 .portfolio-form .form-row,
-.personal-branding-form .form-row {
+.personal-branding-form .form-row,
+.team-form .form-row,
+.testimonial-form .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -564,14 +567,16 @@
 .blog-form .form-group,
 .portfolio-form .form-group,
 .team-form .form-group,
-.personal-branding-form .form-group {
+.personal-branding-form .form-group,
+.testimonial-form .form-group {
   margin-bottom: 24px;
 }
 
 .blog-form label,
 .portfolio-form label,
 .team-form label,
-.personal-branding-form label {
+.personal-branding-form label,
+.testimonial-form label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
@@ -579,7 +584,8 @@
   font-size: 0.9rem;
 }
 
-.blog-form label input[type="checkbox"] {
+.blog-form label input[type="checkbox"],
+.testimonial-form label input[type="checkbox"] {
   width: auto;
   margin-right: 10px;
   transform: scale(1.2);
@@ -597,7 +603,10 @@
 .team-form textarea,
 .personal-branding-form input,
 .personal-branding-form select,
-.personal-branding-form textarea {
+.personal-branding-form textarea,
+.testimonial-form input,
+.testimonial-form select,
+.testimonial-form textarea {
   width: 100%;
   padding: 12px 16px;
   background: rgba(0, 0, 0, 0.03);
@@ -619,7 +628,10 @@
 .team-form textarea:focus,
 .personal-branding-form input:focus,
 .personal-branding-form select:focus,
-.personal-branding-form textarea:focus {
+.personal-branding-form textarea:focus,
+.testimonial-form input:focus,
+.testimonial-form select:focus,
+.testimonial-form textarea:focus {
   outline: none;
   border-color: var(--accent);
   background: rgba(255, 153, 51, 0.04);
@@ -1283,6 +1295,226 @@
   background: rgba(239, 68, 68, 0.16);
 }
 
+/* Checkbox Group */
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checkbox-group label span {
+  margin-bottom: 0;
+}
+
+/* Rating Stars */
+.rating {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px 0;
+}
+
+.text-warning {
+  color: #f59e0b;
+}
+
+.text-muted {
+  color: #9ca3af;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 40px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.status-badge.inactive {
+  background: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
+}
+
+.badge-video {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  padding: 4px 14px;
+  border-radius: 40px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Empty State */
+.empty-state {
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--text-secondary);
+  background: #ffffff;
+  border-radius: 16px;
+  margin: 24px;
+}
+
+/* Testimonial Management */
+.testimonial-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  padding: 24px;
+}
+
+.testimonial-admin-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.testimonial-admin-card.inactive {
+  opacity: 0.6;
+}
+
+.testimonial-admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: rgba(255, 153, 51, 0.15);
+}
+
+.testimonial-admin-header {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.testimonial-admin-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+}
+
+.testimonial-admin-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.testimonial-admin-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.testimonial-admin-info h4 {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.testimonial-admin-info .role {
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.testimonial-admin-content {
+  flex: 1;
+  position: relative;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+.testimonial-admin-content p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+}
+
+.testimonial-admin-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 10px;
+}
+
+.testimonial-admin-metrics span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+.testimonial-admin-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.admin-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.admin-header-actions h2 {
+  color: var(--text-primary);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.admin-header-actions .btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  border: none;
+  border-radius: 40px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(255, 153, 51, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-header-actions .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255, 153, 51, 0.35);
+}
+
+.loading-container {
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .admin-sidebar {
@@ -1300,7 +1532,9 @@
   
   .blog-form .form-row,
   .portfolio-form .form-row,
-  .personal-branding-form .form-row {
+  .personal-branding-form .form-row,
+  .team-form .form-row,
+  .testimonial-form .form-row {
     grid-template-columns: 1fr;
   }
   
@@ -1342,7 +1576,8 @@
   
   .portfolio-admin-grid,
   .team-admin-grid,
-  .personal-branding-grid {
+  .personal-branding-grid,
+  .testimonial-admin-grid {
     grid-template-columns: 1fr;
   }
   

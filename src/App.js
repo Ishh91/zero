@@ -32,6 +32,7 @@ import InquiryManagement from './admin/InquiryManagement';
 import CaseStudyManagement from './admin/CaseStudyManagement';
 import SiteSettingsManagement from './admin/SiteSettingsManagement';
 import GalleryVideoManagement from './admin/GalleryVideoManagement';
+import TestimonialManagement from './admin/TestimonialManagement';
 import './App.css';
 
 function App() {
@@ -139,6 +140,9 @@ function App() {
             </Route>
             <Route path="/admin/gallery-videos" element={<AdminDashboard />}>
               <Route index element={<GalleryVideoManagement />} />
+            </Route>
+            <Route path="/admin/testimonials" element={<AdminDashboard />}>
+              <Route index element={<TestimonialManagement />} />
             </Route>
           </Routes>
         </div>
