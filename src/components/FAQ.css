@@ -1,0 +1,233 @@
+.faq-section {
+  padding: 60px 0 140px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf5 50%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  max-width: 100%;
+  width: 100%;
+}
+
+.faq-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 153, 51, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(255, 153, 51, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.faq-section .container {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.faq-header {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: rgba(255, 153, 51, 0.08);
+  border: 1px solid rgba(255, 153, 51, 0.3);
+  color: var(--accent);
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.section-badge i {
+  font-size: 1rem;
+}
+
+.section-title {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.faq-list {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.faq-item {
+  background: white;
+  border-radius: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.faq-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  border-color: rgba(255, 153, 51, 0.2);
+}
+
+.faq-item:hover::before {
+  transform: scaleX(1);
+}
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.faq-question h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.faq-question i {
+  font-size: 1.2rem;
+  color: var(--accent);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faq-question i.rotated {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  overflow: hidden;
+}
+
+.faq-answer p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #666;
+  margin: 24px 0 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .faq-section {
+    padding: 40px 0 90px;
+  }
+
+  .section-title {
+    font-size: 2.6rem;
+  }
+
+  .faq-item {
+    padding: 24px 28px;
+  }
+
+  .faq-question h3 {
+    font-size: 1.2rem;
+  }
+
+  .faq-answer p {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-section {
+    padding: 30px 0 70px;
+  }
+
+  .faq-section .container {
+    padding: 0 20px;
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .faq-item {
+    padding: 20px 24px;
+    border-radius: 20px;
+  }
+
+  .faq-question h3 {
+    font-size: 1.1rem;
+  }
+
+  .faq-answer p {
+    font-size: 1rem;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .faq-section .container {
+    padding: 0 16px;
+  }
+
+  .section-badge {
+    padding: 8px 20px;
+    font-size: 0.75rem;
+  }
+}

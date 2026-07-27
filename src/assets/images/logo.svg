@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="800" height="200">
+  <!-- Z -->
+  <path d="M50 30 L130 30 L70 100 L130 170 L50 170 L110 100 L50 30" fill="#000000" />
+  
+  <!-- E -->
+  <path d="M170 30 L250 30 L250 50 L190 50 L190 100 L250 100 L250 120 L190 120 L190 170 L250 170 L250 190 L170 190 L170 30" fill="#000000" />
+  
+  <!-- R -->
+  <path d="M290 30 L370 30 L370 100 L340 100 L370 170 L330 170 L300 110 L290 110 L290 170 L290 30 M310 50 L350 50 L350 90 L310 90 L310 50" fill="#000000" />
+  
+  <!-- O (orange) -->
+  <ellipse cx="470" cy="100" rx="80" ry="70" fill="none" stroke="#ff9933" stroke-width="20" />
+  <ellipse cx="470" cy="100" rx="95" ry="85" fill="none" stroke="url(#orangeGlow)" stroke-width="8" />
+  
+  <!-- BUILD FROM SCRATCH text -->
+  <text x="50" y="230" font-family="Arial, sans-serif" font-size="20" fill="#666666" letter-spacing="8">
+    BUILD FROM SCRATCH
+  </text>
+  
+  <!-- Defs -->
+  <defs>
+    <linearGradient id="orangeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9933" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#ff7a00" stop-opacity="1" />
+      <stop offset="100%" stop-color="#ff9933" stop-opacity="0.8" />
+    </linearGradient>
+  </defs>
+</svg>

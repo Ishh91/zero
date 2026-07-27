@@ -1,0 +1,250 @@
+.about-page {
+  background: var(--primary);
+  min-height: 100vh;
+}
+
+.about-hero {
+  padding: 150px 0 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  text-align: center;
+}
+
+.about-hero h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.about-hero p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.about-story {
+  padding: 80px 0;
+}
+
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.story-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: rgba(255, 51, 102, 0.1);
+  color: var(--accent);
+  border-radius: 30px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.story-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.story-content p {
+  color: #000;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.story-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 30px;
+  background: var(--dark-gray);
+  border-radius: 12px;
+}
+
+.stat-item h3 {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.stat-item p {
+  color: #000;
+}
+
+.values-section {
+  padding: 80px 0;
+  background: var(--dark-gray);
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.value-card {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--medium-gray);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-10px);
+}
+
+.value-icon {
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 51, 102, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.value-icon i {
+  font-size: 32px;
+  color: var(--accent);
+}
+
+.value-card h3 {
+  margin-bottom: 15px;
+}
+
+.value-card p {
+  color: #000;
+}
+
+.milestones-section {
+  padding: 80px 0;
+}
+
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+}
+
+.timeline-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.timeline-item:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.timeline-year {
+  width: 45%;
+  text-align: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  padding-right: 30px;
+}
+
+.timeline-item:nth-child(even) .timeline-year {
+  text-align: left;
+  padding-left: 30px;
+  padding-right: 0;
+}
+
+.timeline-content {
+  width: 45%;
+  background: var(--dark-gray);
+  padding: 20px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.timeline-content::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  width: 20px;
+  height: 2px;
+  background: var(--accent);
+}
+
+.timeline-item:nth-child(odd) .timeline-content::before {
+  right: -20px;
+}
+
+.timeline-item:nth-child(even) .timeline-content::before {
+  left: -20px;
+}
+
+.timeline-content h3 {
+  margin-bottom: 10px;
+}
+
+.timeline-content p {
+  color: #000;
+}
+
+.about-cta {
+  background: linear-gradient(135deg, var(--dark-gray), var(--primary));
+  text-align: center;
+  padding: 80px 0;
+}
+
+@media (max-width: 768px) {
+  .about-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .story-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .story-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .timeline::before {
+    left: 30px;
+  }
+  
+  .timeline-item,
+  .timeline-item:nth-child(even) {
+    flex-direction: column;
+    margin-left: 50px;
+  }
+  
+  .timeline-year,
+  .timeline-item:nth-child(even) .timeline-year {
+    width: 100%;
+    text-align: left;
+    padding: 0 0 10px 0;
+  }
+  
+  .timeline-content,
+  .timeline-item:nth-child(even) .timeline-content {
+    width: 100%;
+  }
+  
+  .timeline-content::before {
+    left: -30px !important;
+  }
+}
