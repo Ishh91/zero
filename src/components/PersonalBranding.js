@@ -25,7 +25,7 @@ const PersonalBranding = () => {
   const fetchPersonalBranding = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/personal-branding`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/personal-branding`);
       
       if (response.data.success) {
         setPersonalBrandings(response.data.data);

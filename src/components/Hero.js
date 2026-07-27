@@ -28,7 +28,7 @@ const Hero = () => {
 
   const fetchSettings = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/site-settings`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/site-settings`);
       if (response.data.success) {
         setSettings(response.data.data);
       }

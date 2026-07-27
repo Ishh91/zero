@@ -81,7 +81,7 @@ const ReelShowcase = () => {
     try {
       setLoading(true);
       const params = selectedCategory === 'all' ? {} : { category: selectedCategory };
-      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/portfolio`, { params });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio`, { params });
       
       if (response.data.success) {
         setReels(response.data.data);
