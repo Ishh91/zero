@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -10,15 +10,40 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 30);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  // Close on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const navLinks = [
     { path: '/', label: 'Home' },
@@ -29,106 +54,104 @@ const Navbar = () => {
     { path: '/contact', label: 'Contact' },
   ];
 
-  const navbarVariants = {
-    hidden: { opacity: 0, y: -100 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 1,
-        ease: [0.215, 0.61, 0.355, 1]
-      }
-    }
-  };
-
-  const logoVariants = {
-    hidden: { opacity: 0, scale: 0.8, x: -50 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      x: 0,
-      transition: {
-        duration: 1,
-        ease: [0.215, 0.61, 0.355, 1],
-        delay: 0.3
-      }
-    }
-  };
-
-  const linksContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.5
-      }
-    }
-  };
-
-  const linkVariants = {
-    hidden: { opacity: 0, y: -30, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.7,
-        ease: [0.215, 0.61, 0.355, 1]
-      }
-    }
-  };
-
   return (
-    <motion.nav
-      className={`navbar ${isScrolled ? 'scrolled' : ''}`}
-      initial="hidden"
-      animate="visible"
-      variants={navbarVariants}
-    >
+    <nav className={`navbar ${isScrolled ? 'scrolled' : ''} ${isMobileMenuOpen ? 'menu-open' : ''}`}>
       <div className="nav-container">
-        <motion.div variants={logoVariants} className="logo-wrapper">
-          <Link to="/" className="logo">
+        <div className="logo-wrapper">
+          <Link to="/" className="logo" onClick={() => setIsMobileMenuOpen(false)}>
             <div className="logo-main">
               <span className="logo-z">Z</span>
               <span className="logo-er">ER</span>
               <span className="logo-o">O</span>
             </div>
-            
           </Link>
-        </motion.div>
+        </div>
 
-        <motion.div
-          className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}
-          variants={linksContainerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+        {/* Desktop Navigation Links */}
+        <div className="nav-links desktop-nav">
           {navLinks.map((link) => (
-            <motion.div key={link.path} variants={linkVariants}>
-              <Link
-                to={link.path}
-                className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
-              >
-                {link.label}
-              </Link>
-            </motion.div>
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
+            >
+              {link.label}
+            </Link>
           ))}
-        </motion.div>
+        </div>
 
-        <motion.button
+        {/* Mobile Hamburger Button */}
+        <button
+          type="button"
           className={`mobile-menu-btn ${isMobileMenuOpen ? 'active' : ''}`}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 1.2 }}
+          aria-label={isMobileMenuOpen ? 'Close Menu' : 'Open Menu'}
+          aria-expanded={isMobileMenuOpen}
         >
-          <span></span>
-          <span></span>
-          <span></span>
-        </motion.button>
+          <span className="bar bar-1"></span>
+          <span className="bar bar-2"></span>
+          <span className="bar bar-3"></span>
+        </button>
       </div>
-    </motion.nav>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            className="mobile-drawer-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <motion.div
+              className="mobile-drawer-content"
+              initial={{ y: -30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -30, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mobile-nav-links">
+                {navLinks.map((link, idx) => (
+                  <motion.div
+                    key={link.path}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * idx, duration: 0.25 }}
+                  >
+                    <Link
+                      to={link.path}
+                      className={`mobile-nav-link ${location.pathname === link.path ? 'active' : ''}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <span className="link-text">{link.label}</span>
+                      <i className="fas fa-chevron-right link-arrow"></i>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="mobile-drawer-footer">
+                <Link
+                  to="/contact"
+                  className="mobile-cta-btn"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span>Start a Project</span>
+                  <i className="fas fa-arrow-right"></i>
+                </Link>
+                <div className="mobile-brand-meta">
+                  <span>ZERO BY CINEVIV</span>
+                  <span className="brand-tagline">Content-Led Growth</span>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
 };
 

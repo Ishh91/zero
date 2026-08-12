@@ -319,21 +319,17 @@ html, body {
   position: relative;
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5);
   margin: 0 auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Custom Scrollbar */
-.personal-branding-modal::-webkit-scrollbar {
-  width: 10px;
-}
-
-.personal-branding-modal::-webkit-scrollbar-track {
-  background: #f8f8f8;
-  border-radius: 0 40px 40px 0;
-}
-
-.personal-branding-modal::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
-  border-radius: 10px;
+/* Hide scrollbars */
+.personal-branding-modal::-webkit-scrollbar,
+.personal-branding-section::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .modal-close {

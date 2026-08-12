@@ -172,7 +172,7 @@ const PersonalBranding = () => {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-150px' }}
+          viewport={{ once: true, amount: 0.05 }}
           variants={containerVariants}
           className="personal-branding-header"
         >
@@ -206,7 +206,7 @@ const PersonalBranding = () => {
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-100px' }}
+              viewport={{ once: true, amount: 0.05 }}
               className="personal-branding-grid"
             >
               {personalBrandings.map((person) => (

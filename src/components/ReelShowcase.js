@@ -78,6 +78,7 @@ const ReelShowcase = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [reels, setReels] = useState(DEFAULT_REELS);
   const [loading, setLoading] = useState(false);
+  const [playingId, setPlayingId] = useState(null);
   const videoRefs = useRef({});
 
   useEffect(() => {
@@ -98,6 +99,7 @@ const ReelShowcase = () => {
   };
 
   const handleVideoHover = (id, isHovering) => {
+    if (isMobile) return;
     const video = videoRefs.current[id];
     if (video && video.src) {
       try {
@@ -113,16 +115,33 @@ const ReelShowcase = () => {
     }
   };
 
+  const handleCardClick = (id) => {
+    const video = videoRefs.current[id];
+    if (video && video.src) {
+      if (playingId === id) {
+        video.pause();
+        setPlayingId(null);
+      } else {
+        Object.keys(videoRefs.current).forEach((key) => {
+          const v = videoRefs.current[key];
+          if (v && typeof v.pause === 'function') v.pause();
+        });
+        video.play().catch(() => {});
+        setPlayingId(id);
+      }
+    }
+  };
+
   const filtered = reels;
 
   return (
     <section className="reel-showcase-section">
-      <SectionParticleBackground count={60} color="#ffcc00" />
+      <SectionParticleBackground count={40} color="#ffcc00" />
       <div className="container">
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-150px" }}
+          viewport={{ once: true, amount: 0.05 }}
           variants={containerVariants}
           className="reel-showcase-header"
         >
@@ -143,19 +162,19 @@ const ReelShowcase = () => {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-150px" }}
+          viewport={{ once: true, amount: 0.05 }}
           variants={containerVariants}
           className="category-buttons"
         >
-          {categories.map((cat, idx) => (
-            <motion.button
+          {categories.map((cat) => (
+            <button
+              type="button"
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`category-btn ${selectedCategory === cat ? 'active' : ''}`}
-              variants={itemVariants}
             >
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </motion.button>
+            </button>
           ))}
         </motion.div>
 
@@ -168,64 +187,69 @@ const ReelShowcase = () => {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-150px" }}
+            viewport={{ once: true, amount: 0.05 }}
             variants={containerVariants}
             className="reels-grid"
           >
-            {filtered.map((reel, idx) => (
-              <motion.div
-                key={reel._id}
-                className="reel-card"
-                variants={itemVariants}
-                whileHover={!isMobile ? { y: -8 } : undefined}
-                whileTap={isMobile ? { scale: 0.98 } : undefined}
-                onMouseEnter={() => handleVideoHover(reel._id, true)}
-                onMouseLeave={() => handleVideoHover(reel._id, false)}
-              >
-                {reel.videoUrl ? (
-                  <>
-                    <video
-                      ref={(el) => (videoRefs.current[reel._id] = el)}
-                      className="reel-video"
-                      poster={reel.thumbnailUrl}
-                      muted
-                      playsInline
-                      preload="none"
-                      loop
-                      src={reel.videoUrl}
-                    />
-                    <div className="reel-overlay"></div>
-                    <div className="reel-play-button">
-                      <div className="play-button-bg"></div>
-                      <div className="play-button">
-                        <i className="fas fa-play"></i>
+            {filtered.map((reel) => {
+              const isPlaying = playingId === reel._id;
+              return (
+                <motion.div
+                  key={reel._id}
+                  className={`reel-card ${isPlaying ? 'is-playing' : ''}`}
+                  variants={itemVariants}
+                  whileHover={!isMobile ? { y: -8 } : undefined}
+                  whileTap={{ scale: 0.98 }}
+                  onMouseEnter={() => handleVideoHover(reel._id, true)}
+                  onMouseLeave={() => handleVideoHover(reel._id, false)}
+                  onClick={() => handleCardClick(reel._id)}
+                >
+                  {reel.videoUrl ? (
+                    <>
+                      <video
+                        ref={(el) => { if (el) videoRefs.current[reel._id] = el; }}
+                        className="reel-video"
+                        poster={reel.thumbnailUrl}
+                        muted
+                        playsInline
+                        preload="none"
+                        loop
+                        src={reel.videoUrl}
+                      />
+                      <div className="reel-overlay"></div>
+                      <div className={`reel-play-button ${isPlaying ? 'playing' : ''}`}>
+                        <div className="play-button-bg"></div>
+                        <div className="play-button">
+                          <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'}`}></i>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <img
-                      src={reel.thumbnailUrl}
-                      alt={reel.title}
-                      className="reel-thumbnail"
-                    />
-                    <div className="reel-overlay"></div>
-                    <div className="reel-play-button">
-                      <div className="play-button-bg"></div>
-                      <div className="play-button">
-                        <i className="fas fa-play"></i>
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        src={reel.thumbnailUrl}
+                        alt={reel.title}
+                        className="reel-thumbnail"
+                        loading="lazy"
+                      />
+                      <div className="reel-overlay"></div>
+                      <div className="reel-play-button">
+                        <div className="play-button-bg"></div>
+                        <div className="play-button">
+                          <i className="fas fa-play"></i>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
 
-                {/* Bottom Info */}
-                <div className="reel-info">
-                  <h3>{reel.title}</h3>
-                  <p>{reel.category}</p>
-                </div>
-              </motion.div>
-            ))}
+                  {/* Bottom Info */}
+                  <div className="reel-info">
+                    <h3>{reel.title}</h3>
+                    <p>{reel.category}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
 
@@ -234,7 +258,7 @@ const ReelShowcase = () => {
           className="reel-cta"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-150px" }}
+          viewport={{ once: true, amount: 0.05 }}
           variants={scaleVariants}
         >
           <a href="/work" className="cta-button">
