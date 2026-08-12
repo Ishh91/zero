@@ -14,10 +14,67 @@ import './TeamPage.css';
 import '../components/PersonalBranding.css';
 import '../components/FAQ.css';
 
+const DEFAULT_TEAM = [
+  {
+    _id: 1,
+    name: "Creative Director",
+    role: "Founder & Creative Director",
+    bio: "Brand strategy, creative vision, and client leadership with over a decade of experience.",
+    expertise: ["Brand Strategy", "Creative Direction", "Marketing Vision"],
+    imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
+    socialLinks: { linkedin: "#", instagram: "#" }
+  },
+  {
+    _id: 2,
+    name: "Content Strategist",
+    role: "Content Strategist",
+    bio: "Content planning, viral strategy, and audience psychology expert.",
+    expertise: ["Content Strategy", "Viral Strategy", "Audience Psychology"],
+    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
+    socialLinks: { linkedin: "#", instagram: "#" }
+  },
+  {
+    _id: 3,
+    name: "Cinematic Editor",
+    role: "Video Editor & Cinematographer",
+    bio: "Reel editing, cinematic production, color grading, and motion design specialist.",
+    expertise: ["Video Editing", "Motion Design", "Color Grading"],
+    imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
+    socialLinks: { linkedin: "#", instagram: "#" }
+  },
+  {
+    _id: 4,
+    name: "Performance Marketer",
+    role: "Performance Marketing Manager",
+    bio: "META ads, lead generation, and campaign optimization expert.",
+    expertise: ["META Ads", "Lead Generation", "Analytics"],
+    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
+    socialLinks: { linkedin: "#", instagram: "#" }
+  },
+  {
+    _id: 5,
+    name: "Social Manager",
+    role: "Social Media Manager",
+    bio: "Community management, engagement strategy, and platform growth.",
+    expertise: ["Platform Growth", "Community Engagement", "Content Distribution"],
+    imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
+    socialLinks: { linkedin: "#", instagram: "#" }
+  },
+  {
+    _id: 6,
+    name: "Producer",
+    role: "Production Manager",
+    bio: "Video production coordination, creative execution, and quality assurance.",
+    expertise: ["Video Production", "Project Coordination", "Quality Control"],
+    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
+    socialLinks: { linkedin: "#", instagram: "#" }
+  }
+];
+
 const HomePage = () => {
-  const [team, setTeam] = useState([]);
+  const [team, setTeam] = useState(DEFAULT_TEAM);
   const [selectedMember, setSelectedMember] = useState(null);
-  const [teamLoading, setTeamLoading] = useState(true);
+  const [teamLoading, setTeamLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' && window.innerWidth < 768
   );
@@ -160,124 +217,9 @@ const HomePage = () => {
       const response = await axios.get(`/team`);
       if (response.data.data && response.data.data.length > 0) {
         setTeam(response.data.data);
-      } else {
-        setTeam([
-          {
-            _id: 1,
-            name: "Creative Director",
-            role: "Founder & Creative Director",
-            bio: "Brand strategy, creative vision, and client leadership with over a decade of experience.",
-            expertise: ["Brand Strategy", "Creative Direction", "Marketing Vision"],
-            imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-            socialLinks: { linkedin: "#", instagram: "#" }
-          },
-          {
-            _id: 2,
-            name: "Content Strategist",
-            role: "Content Strategist",
-            bio: "Content planning, viral strategy, and audience psychology expert.",
-            expertise: ["Content Strategy", "Viral Strategy", "Audience Psychology"],
-            imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-            socialLinks: { linkedin: "#", instagram: "#" }
-          },
-          {
-            _id: 3,
-            name: "Cinematic Editor",
-            role: "Video Editor & Cinematographer",
-            bio: "Reel editing, cinematic production, color grading, and motion design specialist.",
-            expertise: ["Video Editing", "Motion Design", "Color Grading"],
-            imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-            socialLinks: { linkedin: "#", instagram: "#" }
-          },
-          {
-            _id: 4,
-            name: "Performance Marketer",
-            role: "Performance Marketing Manager",
-            bio: "META ads, lead generation, and campaign optimization expert.",
-            expertise: ["META Ads", "Lead Generation", "Analytics"],
-            imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-            socialLinks: { linkedin: "#", instagram: "#" }
-          },
-          {
-            _id: 5,
-            name: "Social Manager",
-            role: "Social Media Manager",
-            bio: "Community management, engagement strategy, and platform growth.",
-            expertise: ["Platform Growth", "Community Engagement", "Content Distribution"],
-            imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-            socialLinks: { linkedin: "#", instagram: "#" }
-          },
-          {
-            _id: 6,
-            name: "Producer",
-            role: "Production Manager",
-            bio: "Video production coordination, creative execution, and quality assurance.",
-            expertise: ["Video Production", "Project Coordination", "Quality Control"],
-            imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-            socialLinks: { linkedin: "#", instagram: "#" }
-          }
-        ]);
       }
     } catch (error) {
-      console.error('Error fetching team:', error);
-      setTeam([
-        {
-          _id: 1,
-          name: "Creative Director",
-          role: "Founder & Creative Director",
-          bio: "Brand strategy, creative vision, and client leadership with over a decade of experience.",
-          expertise: ["Brand Strategy", "Creative Direction", "Marketing Vision"],
-          imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-          socialLinks: { linkedin: "#", instagram: "#" }
-        },
-        {
-          _id: 2,
-          name: "Content Strategist",
-          role: "Content Strategist",
-          bio: "Content planning, viral strategy, and audience psychology expert.",
-          expertise: ["Content Strategy", "Viral Strategy", "Audience Psychology"],
-          imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-          socialLinks: { linkedin: "#", instagram: "#" }
-        },
-        {
-          _id: 3,
-          name: "Cinematic Editor",
-          role: "Video Editor & Cinematographer",
-          bio: "Reel editing, cinematic production, color grading, and motion design specialist.",
-          expertise: ["Video Editing", "Motion Design", "Color Grading"],
-          imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-          socialLinks: { linkedin: "#", instagram: "#" }
-        },
-        {
-          _id: 4,
-          name: "Performance Marketer",
-          role: "Performance Marketing Manager",
-          bio: "META ads, lead generation, and campaign optimization expert.",
-          expertise: ["META Ads", "Lead Generation", "Analytics"],
-          imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-          socialLinks: { linkedin: "#", instagram: "#" }
-        },
-        {
-          _id: 5,
-          name: "Social Manager",
-          role: "Social Media Manager",
-          bio: "Community management, engagement strategy, and platform growth.",
-          expertise: ["Platform Growth", "Community Engagement", "Content Distribution"],
-          imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-          socialLinks: { linkedin: "#", instagram: "#" }
-        },
-        {
-          _id: 6,
-          name: "Producer",
-          role: "Production Manager",
-          bio: "Video production coordination, creative execution, and quality assurance.",
-          expertise: ["Video Production", "Project Coordination", "Quality Control"],
-          imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-          socialLinks: { linkedin: "#", instagram: "#" }
-        }
-      ]);
-    } finally {
-      setTeamLoading(false);
+      // Silently keep default team data if server is waking up
     }
   };
 

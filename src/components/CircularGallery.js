@@ -76,36 +76,8 @@ async function loadCustomFont(fontUrl) {
   return isStylesheet ? loadFontFromStylesheet(fontUrl) : loadFontFromFile(fontUrl);
 }
 
-async function resolveFont(font, fontUrl) {
-  const effectiveUrl = fontUrl || (font === DEFAULT_FONT ? DEFAULT_FONT_URL : null);
-  if (!effectiveUrl) {
-    if (document.fonts && document.fonts.load) {
-      try {
-        await document.fonts.load(font);
-        await document.fonts.ready;
-      } catch {
-        // Ignore
-      }
-    }
-    return font;
-  }
-  try {
-    const family = await loadCustomFont(effectiveUrl);
-    const sizeMatch = font.match(/^\s*(.*?\d+px)/);
-    const prefix = sizeMatch ? sizeMatch[1].trim() : 'bold 30px';
-    const resolved = `${prefix} "${family}"`;
-    if (document.fonts && document.fonts.load) {
-      try {
-        await document.fonts.load(resolved);
-      } catch {
-        // Ignore
-      }
-    }
-    return resolved;
-  } catch (error) {
-    console.error('CircularGallery: unable to load font from', fontUrl, error);
-    return font;
-  }
+function resolveFont(font) {
+  return font || 'bold 30px Orbitron';
 }
 
 function getFontSize(font) {
@@ -289,9 +261,7 @@ class Media {
 
     if (this.video) {
       const videoEl = document.createElement('video');
-      const cacheBuster = (this.video.indexOf('?') === -1 ? '?' : '&') + '_v=' + Date.now() + '_' + this.index;
-      const useCacheBust = !this.video.startsWith('blob:') && !this.video.startsWith('data:');
-      videoEl.src = useCacheBust ? (this.video + cacheBuster) : this.video;
+      videoEl.src = this.video;
       videoEl.crossOrigin = 'anonymous';
       videoEl.loop = true;
       videoEl.muted = true;
@@ -313,33 +283,25 @@ class Media {
         const p = videoEl.play();
         if (p && typeof p.catch === 'function') p.catch(() => {});
       });
-      videoEl.addEventListener('error', (ev) => {
-        const err = videoEl.error;
-        if (err && (err.code === MediaError.MEDIA_ERR_NETWORK || err.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED)) {
-          if (useCacheBust && !this.video.includes('_retry=')) {
-            this.video = this.video + (this.video.indexOf('?') === -1 ? '?' : '&') + '_retry=1';
-            const retryEl = document.createElement('video');
-            retryEl.src = this.video;
-            retryEl.crossOrigin = 'anonymous';
-            retryEl.loop = true;
-            retryEl.muted = true;
-            retryEl.playsInline = true;
-            retryEl.preload = 'metadata';
-            retryEl.setAttribute('webkit-playsinline', 'true');
-            retryEl.addEventListener('loadedmetadata', () => {
-              if (!retryEl.videoWidth || !retryEl.videoHeight) {
-                this.program.uniforms.uImageSizes.value = [1280, 720];
-              } else {
-                this.program.uniforms.uImageSizes.value = [retryEl.videoWidth, retryEl.videoHeight];
-              }
-              texture.image = retryEl;
-              const p2 = retryEl.play();
-              if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
-            });
-            retryEl.addEventListener('error', () => { /* silent final */ });
-            this.videoElement = retryEl;
-          }
-        }
+      videoEl.addEventListener('error', () => {
+        // Graceful fallback to dark cinematic canvas texture on network/403 error
+        const fallbackCanvas = document.createElement('canvas');
+        fallbackCanvas.width = 640;
+        fallbackCanvas.height = 360;
+        const ctx = fallbackCanvas.getContext('2d');
+        const grad = ctx.createLinearGradient(0, 0, 640, 360);
+        grad.addColorStop(0, '#1a140d');
+        grad.addColorStop(0.5, '#2b1c08');
+        grad.addColorStop(1, '#0b0a07');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 640, 360);
+        ctx.fillStyle = '#ffaa33';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.text || 'ZERO', 320, 180);
+        texture.image = fallbackCanvas;
+        this.program.uniforms.uImageSizes.value = [640, 360];
       });
     } else if (this.image) {
       const img = new Image();
@@ -486,8 +448,8 @@ class App {
   }
   createGeometry() {
     this.planeGeometry = new Plane(this.gl, {
-      heightSegments: 50,
-      widthSegments: 100
+      heightSegments: 16,
+      widthSegments: 24
     });
   }
   createMedias(items, bend = 1, textColor, borderRadius, font) {
@@ -626,6 +588,13 @@ class App {
   }
 }
 
+const DEFAULT_GALLERY_ITEMS = [
+  { image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop', text: 'Brand Storytelling' },
+  { image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop', text: 'Cinematic Visuals' },
+  { image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&fit=crop', text: 'Viral Content' },
+  { image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&h=600&fit=crop', text: 'Creative Direction' },
+];
+
 export default function CircularGallery({
   items,
   bend = 2,
@@ -637,8 +606,8 @@ export default function CircularGallery({
   scrollEase = 0.09
 }) {
   const containerRef = useRef(null);
-  const [galleryItems, setGalleryItems] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+  const [galleryItems, setGalleryItems] = useState(items && items.length ? items : DEFAULT_GALLERY_ITEMS);
+  const [loaded, setLoaded] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -647,19 +616,16 @@ export default function CircularGallery({
         if (items && items.length) {
           if (isMounted) {
             setGalleryItems(items);
-            setLoaded(true);
           }
           return;
         }
         const response = await axios.get(`/gallery-videos`);
-        if (response.data.success && isMounted) {
+        if (response.data.success && isMounted && response.data.data.length > 0) {
           const mapped = response.data.data.map(v => ({ video: v.videoUrl, text: v.title }));
           setGalleryItems(mapped);
         }
       } catch (error) {
-        console.error('Error fetching gallery videos:', error);
-      } finally {
-        if (isMounted) setLoaded(true);
+        // Silently use defaults if offline or waking up
       }
     };
     fetchGallery();
@@ -669,25 +635,21 @@ export default function CircularGallery({
   useEffect(() => {
     if (!containerRef.current || !loaded) return;
     if (!galleryItems || galleryItems.length === 0) return;
-    let app;
-    let isMounted = true;
-    resolveFont(font, fontUrl).then(resolvedFont => {
-      if (!isMounted || !containerRef.current) return;
-      app = new App(containerRef.current, {
-        items: galleryItems,
-        bend,
-        textColor,
-        borderRadius,
-        font: resolvedFont,
-        scrollSpeed,
-        scrollEase
-      });
+    
+    const app = new App(containerRef.current, {
+      items: galleryItems,
+      bend,
+      textColor,
+      borderRadius,
+      font: font || 'bold 30px Orbitron',
+      scrollSpeed,
+      scrollEase
     });
+
     return () => {
-      isMounted = false;
-      if (app) app.destroy();
+      app.destroy();
     };
-  }, [galleryItems, loaded, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase]);
+  }, [galleryItems, loaded, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
   return (
     <div
       className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"

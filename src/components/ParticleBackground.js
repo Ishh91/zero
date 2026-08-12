@@ -1,102 +1,100 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
-
-const ParticleField = () => {
-  const particlesRef = useRef();
-  const count = 400;
-
-  const [position, color] = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const col = new Float32Array(count * 3);
-    
-    for (let i = 0; i < count; i++) {
-      const i3 = i * 3;
-      pos[i3] = (Math.random() - 0.5) * 20;
-      pos[i3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i3 + 2] = (Math.random() - 0.5) * 20;
-      
-      // Orange/amber colors
-      const hue = 0.08 + Math.random() * 0.1;
-      const rgb = new THREE.Color().setHSL(hue, 0.8, 0.5 + Math.random() * 0.3);
-      col[i3] = rgb.r;
-      col[i3 + 1] = rgb.g;
-      col[i3 + 2] = rgb.b;
-    }
-    
-    return [pos, col];
-  }, []);
-
-  useFrame((state) => {
-    if (particlesRef.current) {
-      particlesRef.current.rotation.x += 0.0005;
-      particlesRef.current.rotation.y += 0.001;
-    }
-  });
-
-  return (
-    <points ref={particlesRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={count}
-          array={position}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          count={count}
-          array={color}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.08}
-        vertexColors
-        transparent
-        opacity={0.7}
-        sizeAttenuation
-      />
-    </points>
-  );
-};
+import React, { useEffect, useRef } from 'react';
 
 const ParticleBackground = () => {
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' && window.innerWidth < 768
-  );
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) return; // Skip on mobile for performance
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let animationFrameId;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const count = 120;
+    const particles = Array.from({ length: count }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 2 + 0.8,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3 - 0.1,
+      hue: 35 + Math.random() * 15,
+      alpha: Math.random() * 0.5 + 0.2,
+      dAlpha: (Math.random() - 0.5) * 0.006,
+    }));
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < count; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha += p.dAlpha;
+
+        if (p.alpha <= 0.1 || p.alpha >= 0.7) {
+          p.dAlpha = -p.dAlpha;
+        }
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 90%, 55%, ${Math.max(0, Math.min(1, p.alpha))})`;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = 'rgba(255, 153, 0, 0.4)';
+        ctx.fill();
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
-  if (isMobile) {
-    return null; // Disable Three.js particle background on mobile for performance
-  }
-
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      zIndex: 0,
-      pointerEvents: 'none',
-      overflow: 'hidden'
-    }}>
-      <Canvas 
-        camera={{ position: [0, 0, 5], fov: 60 }} 
-        style={{ overflow: 'hidden' }}
-        dpr={[1, 1.5]}
-        performance={{ min: 0.5 }}
-      >
-        <ParticleField />
-      </Canvas>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
+    >
+      <canvas
+        ref={canvasRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          pointerEvents: 'none',
+        }}
+      />
     </div>
   );
 };
 
-export default ParticleBackground;
+export default React.memo(ParticleBackground);

@@ -5,9 +5,97 @@ import SectionParticleBackground from './SectionParticleBackground';
 import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './PersonalBranding.css';
 
+const DEFAULT_PERSONAL_BRANDINGS = [
+  {
+    _id: '1',
+    name: 'Shikhar Theatrewala',
+    field: 'Actor & Theatre Teacher',
+    bio: 'From 60k followers with zero ROI to 236k followers with a thriving community of paying students. We repositioned his content to lead with acting credibility first, letting his training record (3,000+ students, pan-India and international) build trust underneath it — cutting dependency on ad spend while growing nearly 4x.',
+    avatarUrl: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=400',
+    stats: [
+      { label: 'Followers Growth', value: '60K → 236K', icon: 'fas fa-users' },
+      { label: 'Students Trained', value: '3,000+', icon: 'fas fa-graduation-cap' },
+      { label: 'Ad Spend Reduction', value: '↓ 60%', icon: 'fas fa-chart-line' }
+    ],
+    videos: [
+      { 
+        title: 'Acting Credibility First', 
+        description: 'How we repositioned content to lead with expertise', 
+        videoUrl: '', 
+        thumbnailUrl: 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=400' 
+      }
+    ],
+    photos: [
+      { title: 'Theatre Workshop', imageUrl: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=400' }
+    ],
+    socialLinks: {
+      instagram: '#',
+      youtube: '#'
+    },
+    caseStudy: true
+  },
+  {
+    _id: '2',
+    name: 'Shanvivaarya Human',
+    field: 'Shayari & Relationship Content Creator',
+    bio: 'Zero ad spend. Built entirely on content. A consistent identity built around what people actually came for: his shayari, and his read on relationships. The result is an audience that doesn\'t just scroll past — they act on what he says.',
+    avatarUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
+    stats: [
+      { label: 'Ad Spend', value: '₹0', icon: 'fas fa-wallet' },
+      { label: 'Growth Strategy', value: '100% Organic', icon: 'fas fa-seedling' },
+      { label: 'Audience Action', value: 'High Conversion', icon: 'fas fa-bolt' }
+    ],
+    videos: [
+      { 
+        title: 'Shayari That Connects', 
+        description: 'Content that builds trust without paid promotion', 
+        videoUrl: '', 
+        thumbnailUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400' 
+      }
+    ],
+    photos: [
+      { title: 'Relationship Content', imageUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400' }
+    ],
+    socialLinks: {
+      instagram: '#',
+      twitter: '#'
+    },
+    caseStudy: true
+  },
+  {
+    _id: '3',
+    name: 'Dr. Priya Sharma',
+    field: 'Healthcare & Wellness Expert',
+    bio: 'We brought the same content-led approach to healthcare — leading with expertise and real patient stories to build trust that converts into consultations. No gimmicks, just authentic medical content that educates and converts.',
+    avatarUrl: 'https://images.pexels.com/photos/1181685/pexels-photo-1181685.jpeg?auto=compress&cs=tinysrgb&w=400',
+    stats: [
+      { label: 'Patient Bookings', value: '↑ 240%', icon: 'fas fa-heartbeat' },
+      { label: 'Trust Score', value: '4.9/5', icon: 'fas fa-star' },
+      { label: 'Organic Reach', value: '2.5M+', icon: 'fas fa-globe' }
+    ],
+    videos: [
+      { 
+        title: 'Trust-Based Healthcare Content', 
+        description: 'Building authority through authentic medical storytelling', 
+        videoUrl: '', 
+        thumbnailUrl: 'https://images.pexels.com/photos/1181685/pexels-photo-1181685.jpeg?auto=compress&cs=tinysrgb&w=400' 
+      }
+    ],
+    photos: [
+      { title: 'Healthcare Consultations', imageUrl: 'https://images.pexels.com/photos/1181685/pexels-photo-1181685.jpeg?auto=compress&cs=tinysrgb&w=400' }
+    ],
+    socialLinks: {
+      linkedin: '#',
+      instagram: '#',
+      youtube: '#'
+    },
+    caseStudy: true
+  }
+];
+
 const PersonalBranding = () => {
-  const [personalBrandings, setPersonalBrandings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [personalBrandings, setPersonalBrandings] = useState(DEFAULT_PERSONAL_BRANDINGS);
+  const [loading, setLoading] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -25,104 +113,13 @@ const PersonalBranding = () => {
 
   const fetchPersonalBranding = async () => {
     try {
-      setLoading(true);
       const response = await axios.get(`/personal-branding`);
       
-      if (response.data.success) {
+      if (response.data.success && response.data.data && response.data.data.length > 0) {
         setPersonalBrandings(response.data.data);
       }
     } catch (error) {
-      console.error('Error fetching personal branding:', error);
-      // Fallback data with actual case studies
-      setPersonalBrandings([
-        {
-          _id: '1',
-          name: 'Shikhar Theatrewala',
-          field: 'Actor & Theatre Teacher',
-          bio: 'From 60k followers with zero ROI to 236k followers with a thriving community of paying students. We repositioned his content to lead with acting credibility first, letting his training record (3,000+ students, pan-India and international) build trust underneath it — cutting dependency on ad spend while growing nearly 4x.',
-          avatarUrl: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=400',
-          stats: [
-            { label: 'Followers Growth', value: '60K → 236K', icon: 'fas fa-users' },
-            { label: 'Students Trained', value: '3,000+', icon: 'fas fa-graduation-cap' },
-            { label: 'Ad Spend Reduction', value: '↓ 60%', icon: 'fas fa-chart-line' }
-          ],
-          videos: [
-            { 
-              title: 'Acting Credibility First', 
-              description: 'How we repositioned content to lead with expertise', 
-              videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', 
-              thumbnailUrl: 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=400' 
-            }
-          ],
-          photos: [
-            { title: 'Theatre Workshop', imageUrl: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=400' }
-          ],
-          socialLinks: {
-            instagram: '#',
-            youtube: '#'
-          },
-          caseStudy: true
-        },
-        {
-          _id: '2',
-          name: 'Shanvivaarya Human',
-          field: 'Shayari & Relationship Content Creator',
-          bio: 'Zero ad spend. Built entirely on content. A consistent identity built around what people actually came for: his shayari, and his read on relationships. The result is an audience that doesn\'t just scroll past — they act on what he says.',
-          avatarUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
-          stats: [
-            { label: 'Ad Spend', value: '₹0', icon: 'fas fa-wallet' },
-            { label: 'Growth Strategy', value: '100% Organic', icon: 'fas fa-seedling' },
-            { label: 'Audience Action', value: 'High Conversion', icon: 'fas fa-bolt' }
-          ],
-          videos: [
-            { 
-              title: 'Shayari That Connects', 
-              description: 'Content that builds trust without paid promotion', 
-              videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', 
-              thumbnailUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400' 
-            }
-          ],
-          photos: [
-            { title: 'Relationship Content', imageUrl: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400' }
-          ],
-          socialLinks: {
-            instagram: '#',
-            twitter: '#'
-          },
-          caseStudy: true
-        },
-        {
-          _id: '3',
-          name: 'Dr. Priya Sharma',
-          field: 'Healthcare & Wellness Expert',
-          bio: 'We brought the same content-led approach to healthcare — leading with expertise and real patient stories to build trust that converts into consultations. No gimmicks, just authentic medical content that educates and converts.',
-          avatarUrl: 'https://images.pexels.com/photos/1181685/pexels-photo-1181685.jpeg?auto=compress&cs=tinysrgb&w=400',
-          stats: [
-            { label: 'Patient Bookings', value: '↑ 240%', icon: 'fas fa-heartbeat' },
-            { label: 'Trust Score', value: '4.9/5', icon: 'fas fa-star' },
-            { label: 'Organic Reach', value: '2.5M+', icon: 'fas fa-globe' }
-          ],
-          videos: [
-            { 
-              title: 'Trust-Based Healthcare Content', 
-              description: 'Building authority through authentic medical storytelling', 
-              videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', 
-              thumbnailUrl: 'https://images.pexels.com/photos/1181685/pexels-photo-1181685.jpeg?auto=compress&cs=tinysrgb&w=400' 
-            }
-          ],
-          photos: [
-            { title: 'Healthcare Consultations', imageUrl: 'https://images.pexels.com/photos/1181685/pexels-photo-1181685.jpeg?auto=compress&cs=tinysrgb&w=400' }
-          ],
-          socialLinks: {
-            linkedin: '#',
-            instagram: '#',
-            youtube: '#'
-          },
-          caseStudy: true
-        }
-      ]);
-    } finally {
-      setLoading(false);
+      // Silently keep default state
     }
   };
 

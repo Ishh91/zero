@@ -10,12 +10,14 @@ const GalleryVideoManagement = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
+    videoUrl: '',
     thumbnailUrl: '',
     order: 0,
     isActive: true,
   });
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     fetchVideos();
@@ -40,6 +42,15 @@ const GalleryVideoManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg('');
+    if (!formData.title || !formData.title.trim()) {
+      setErrorMsg('Please enter a title');
+      return;
+    }
+    if (!videoFile && !(formData.videoUrl && formData.videoUrl.trim()) && !editingItem) {
+      setErrorMsg('Please either upload a video file OR paste a video URL (Cloudinary / YouTube / hosted .mp4 link)');
+      return;
+    }
     const submitData = new FormData();
     submitData.append('data', JSON.stringify(formData));
     if (videoFile) {
@@ -66,8 +77,14 @@ const GalleryVideoManagement = () => {
         setShowForm(false);
       }
     } catch (error) {
-      console.error('Error saving gallery video:', error);
-      alert('Error saving gallery video');
+      const serverMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        'Unknown server error';
+      console.error('Error saving gallery video:', error, '| server said:', serverMessage);
+      setErrorMsg(`Error saving gallery video: ${serverMessage}`);
+      alert(`Error saving gallery video: ${serverMessage}`);
     } finally {
       setLoading(false);
     }
@@ -91,6 +108,7 @@ const GalleryVideoManagement = () => {
     setEditingItem(item);
     setFormData({
       title: item.title,
+      videoUrl: item.videoUrl || '',
       thumbnailUrl: item.thumbnailUrl || '',
       order: item.order || 0,
       isActive: item.isActive,
@@ -103,12 +121,14 @@ const GalleryVideoManagement = () => {
     setEditingItem(null);
     setFormData({
       title: '',
+      videoUrl: '',
       thumbnailUrl: '',
       order: 0,
       isActive: true,
     });
     setVideoFile(null);
     setVideoPreview('');
+    setErrorMsg('');
   };
 
   const handleVideoChange = (e) => {
@@ -169,6 +189,22 @@ const GalleryVideoManagement = () => {
 
             <form onSubmit={handleSubmit} className="personal-branding-form">
               <div className="tab-content">
+                {errorMsg && (
+                  <div style={{
+                    padding: '12px 16px',
+                    marginBottom: '18px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(220, 38, 38, 0.12)',
+                    border: '1px solid rgba(220, 38, 38, 0.35)',
+                    color: '#fca5a5',
+                    fontSize: '14px',
+                    lineHeight: '1.45'
+                  }}>
+                    <i className="fas fa-exclamation-triangle" style={{ marginRight: '8px' }}></i>
+                    {errorMsg}
+                  </div>
+                )}
+
                 <div className="form-group">
                   <label>Title *</label>
                   <input
@@ -181,14 +217,36 @@ const GalleryVideoManagement = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Video *</label>
+                  <label>Video URL (Cloudinary / hosted .mp4) — required if no file uploaded</label>
+                  <input
+                    type="url"
+                    value={formData.videoUrl}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setFormData({ ...formData, videoUrl: v });
+                      if (v) {
+                        setVideoPreview(v);
+                        setVideoFile(null);
+                      }
+                    }}
+                    placeholder="https://res.cloudinary.com/.../vXXX/....mp4  OR  https://.../video.mp4"
+                  />
+                  {formData.videoUrl && !videoFile && (
+                    <p style={{ marginTop: '10px', color: '#86efac', fontSize: '13px' }}>
+                      <i className="fas fa-link"></i> Will use this URL directly (no upload, no extra Cloudinary cost)
+                    </p>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label>Video File Upload (optional — if provided, it uploads to Cloudinary and replaces the URL above)</label>
                   <input type="file" accept="video/*" onChange={handleVideoChange} />
                   {videoPreview && (
                     <div style={{ marginTop: '15px' }}>
                       <video src={videoPreview} controls style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '8px' }} />
                     </div>
                   )}
-                  {editingItem && !videoFile && (
+                  {editingItem && !videoFile && !formData.videoUrl && (
                     <p style={{ marginTop: '10px', color: 'rgba(255,153,0)' }}>
                       <i className="fas fa-check-circle"></i> Current video already saved
                     </p>

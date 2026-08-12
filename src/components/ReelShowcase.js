@@ -7,6 +7,13 @@ import './Hero.css';
 
 const categories = ['all', 'Fashion', 'Food', 'Lifestyle', 'Brand Commercials', 'Events', 'Personal Branding', 'Product Shoots', 'Social Media Ads'];
 
+const DEFAULT_REELS = [
+  { _id: '1', category: 'Fashion', thumbnailUrl: 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Fashion Campaign 01', videoUrl: '' },
+  { _id: '2', category: 'Food', thumbnailUrl: 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Food Brand Launch', videoUrl: '' },
+  { _id: '3', category: 'Lifestyle', thumbnailUrl: 'https://images.pexels.com/photos/3945684/pexels-photo-3945684.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Lifestyle Series', videoUrl: '' },
+  { _id: '4', category: 'Brand Commercials', thumbnailUrl: 'https://images.pexels.com/photos/3587620/pexels-photo-3587620.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Commercial Spot', videoUrl: '' },
+];
+
 const ReelShowcase = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -69,8 +76,8 @@ const ReelShowcase = () => {
     }
   };
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [reels, setReels] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [reels, setReels] = useState(DEFAULT_REELS);
+  const [loading, setLoading] = useState(false);
   const videoRefs = useRef({});
 
   useEffect(() => {
@@ -79,24 +86,14 @@ const ReelShowcase = () => {
 
   const fetchReels = async () => {
     try {
-      setLoading(true);
       const params = selectedCategory === 'all' ? {} : { category: selectedCategory };
       const response = await axios.get(`/portfolio`, { params });
       
-      if (response.data.success) {
+      if (response.data.success && response.data.data && response.data.data.length > 0) {
         setReels(response.data.data);
       }
     } catch (error) {
-      console.error('Error fetching portfolio:', error);
-      // Fallback to hardcoded data if API fails
-      setReels([
-        { _id: '1', category: 'Fashion', thumbnailUrl: 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Fashion Campaign 01', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-        { _id: '2', category: 'Food', thumbnailUrl: 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Food Brand Launch', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
-        { _id: '3', category: 'Lifestyle', thumbnailUrl: 'https://images.pexels.com/photos/3945684/pexels-photo-3945684.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Lifestyle Series', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
-        { _id: '4', category: 'Brand Commercials', thumbnailUrl: 'https://images.pexels.com/photos/3587620/pexels-photo-3587620.jpeg?auto=compress&cs=tinysrgb&w=400', title: 'Commercial Spot', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
-      ]);
-    } finally {
-      setLoading(false);
+      // Silently keep default state if API is waking up
     }
   };
 
@@ -120,7 +117,7 @@ const ReelShowcase = () => {
 
   return (
     <section className="reel-showcase-section">
-      <SectionParticleBackground count={150} color="#ffcc00" />
+      <SectionParticleBackground count={60} color="#ffcc00" />
       <div className="container">
         <motion.div
           initial="hidden"
@@ -193,6 +190,7 @@ const ReelShowcase = () => {
                       poster={reel.thumbnailUrl}
                       muted
                       playsInline
+                      preload="none"
                       loop
                       src={reel.videoUrl}
                     />
