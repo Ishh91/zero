@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import './Admin.css';
 
 const SiteSettingsManagement = () => {
@@ -20,16 +21,14 @@ const SiteSettingsManagement = () => {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/site-settings`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.data.success) {
+      const response = await api.get(`/site-settings`);
+      if (response.data.success && response.data.data) {
         setFormData(response.data.data);
-        setVideoPreview(response.data.data.heroVideoUrl);
+        setVideoPreview(response.data.data.heroVideoUrl || '');
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
+      toast.error('Failed to load site settings');
     } finally {
       setLoading(false);
     }
@@ -45,18 +44,15 @@ const SiteSettingsManagement = () => {
 
     setSaving(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.put(`/site-settings`, submitData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.put(`/site-settings`, submitData);
       if (response.data.success) {
-        alert('Settings saved successfully!');
+        toast.success('Settings saved successfully!');
         fetchSettings();
         setVideoFile(null);
       }
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Error saving settings');
+      toast.error(error.response?.data?.message || 'Error saving settings');
     } finally {
       setSaving(false);
     }

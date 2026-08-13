@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
+import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
 const PortfolioManagement = () => {
@@ -17,15 +19,20 @@ const PortfolioManagement = () => {
       views: '',
       engagement: '',
       conversions: '',
+      reach: '',
+      saves: '',
+      shares: '',
     },
     tags: [],
     featured: false,
+    order: 0,
+    isActive: true,
   });
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState('');
   const [tagInput, setTagInput] = useState('');
   const [videoPreview, setVideoPreview] = useState('');
-  const [thumbnailPreview, setThumbnailPreview] = useState('');
 
   const categories = ['Fashion', 'Food', 'Lifestyle', 'Brand Commercials', 'Events', 'Personal Branding', 'Product Shoots', 'Social Media Ads'];
 
@@ -36,13 +43,11 @@ const PortfolioManagement = () => {
   const fetchPortfolio = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/portfolio`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setPortfolio(response.data.data);
+      const response = await api.get(`/portfolio`);
+      setPortfolio(response.data.data || []);
     } catch (error) {
       console.error('Error fetching portfolio:', error);
+      toast.error('Failed to load portfolio items');
     } finally {
       setLoading(false);
     }
@@ -52,7 +57,7 @@ const PortfolioManagement = () => {
     e.preventDefault();
     
     if (!videoFile && !editingItem) {
-      alert('Please select a video file');
+      toast.error('Please select a video file');
       return;
     }
     
@@ -70,33 +75,31 @@ const PortfolioManagement = () => {
     setLoading(true);
     
     try {
-      const token = localStorage.getItem('adminToken');
       const config = {
-        headers: { 
-          Authorization: `Bearer ${token}`
-        },
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          setUploadProgress(percentCompleted);
+          if (progressEvent.total) {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percentCompleted);
+          }
         }
       };
       
       let response;
       if (editingItem) {
-        response = await axios.put(`/portfolio/${editingItem._id}`, submitData, config);
+        response = await api.put(`/portfolio/${editingItem._id}`, submitData, config);
       } else {
-        response = await axios.post(`/portfolio`, submitData, config);
+        response = await api.post(`/portfolio`, submitData, config);
       }
       
       if (response.data.success) {
         fetchPortfolio();
         resetForm();
         setShowForm(false);
-        alert(editingItem ? 'Portfolio updated successfully!' : 'Portfolio created successfully!');
+        toast.success(editingItem ? 'Portfolio updated successfully!' : 'Portfolio created successfully!');
       }
     } catch (error) {
       console.error('Error saving portfolio:', error);
-      alert(error.response?.data?.message || 'Error saving portfolio');
+      toast.error(error.response?.data?.message || 'Error saving portfolio');
     } finally {
       setLoading(false);
       setUploadProgress(0);
@@ -106,14 +109,12 @@ const PortfolioManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this portfolio item?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/portfolio/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/portfolio/${id}`);
+        toast.success('Portfolio item deleted');
         fetchPortfolio();
       } catch (error) {
         console.error('Error deleting portfolio:', error);
-        alert('Error deleting portfolio');
+        toast.error('Error deleting portfolio');
       }
     }
   };

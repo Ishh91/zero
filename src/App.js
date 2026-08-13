@@ -1,12 +1,12 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
 import Lenis from 'lenis';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import ProtectedRoute from './components/ProtectedRoute';
+import { ToastContainer } from './components/UI/Toast';
 import './App.css';
 
 // Lazy loaded public pages
@@ -60,21 +60,10 @@ const RouteLoader = () => (
 );
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Optimize AOS for mobile performance
-    AOS.init({
-      duration: 800,
-      once: true, // Only animate once per element
-      mirror: false, // Disable mirroring on scroll back
-      offset: 100,
-      delay: 50,
-      easing: 'ease-out-cubic',
-      disable: () => window.innerWidth < 768, // Disable AOS on small screens for better performance
-    });
-    
-    // Initialize Lenis for opraah.in-style smooth scrolling - simple setup
+    // Initialize Lenis for smooth scrolling
     const lenis = new Lenis({
       lerp: 0.1,
     });
@@ -93,7 +82,6 @@ function App() {
     };
   }, []);
   
-  // Separate useEffect for auth
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (token) {
@@ -105,6 +93,7 @@ function App() {
     <HelmetProvider>
       <Router>
         <div className="App">
+          <ToastContainer />
           <Suspense fallback={<RouteLoader />}>
             <Routes>
               {/* Public Routes */}
@@ -132,37 +121,39 @@ function App() {
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLogin setIsAuthenticated={setIsAuthenticated} />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />}>
+              
+              {/* Protected Admin Routes */}
+              <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<div className="dashboard-welcome"><h2>Welcome to Admin Dashboard</h2><p>Select an option from the sidebar to manage content.</p></div>} />
               </Route>
-              <Route path="/admin/blogs" element={<AdminDashboard />}>
+              <Route path="/admin/blogs" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<BlogManagement />} />
               </Route>
-              <Route path="/admin/portfolio" element={<AdminDashboard />}>
+              <Route path="/admin/portfolio" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<PortfolioManagement />} />
               </Route>
-              <Route path="/admin/team" element={<AdminDashboard />}>
+              <Route path="/admin/team" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<TeamManagement />} />
               </Route>
-              <Route path="/admin/personal-branding" element={<AdminDashboard />}>
+              <Route path="/admin/personal-branding" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<PersonalBrandingManagement />} />
               </Route>
-              <Route path="/admin/case-studies" element={<AdminDashboard />}>
+              <Route path="/admin/case-studies" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<CaseStudyManagement />} />
               </Route>
-              <Route path="/admin/media" element={<AdminDashboard />}>
+              <Route path="/admin/media" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<MediaLibrary />} />
               </Route>
-              <Route path="/admin/inquiries" element={<AdminDashboard />}>
+              <Route path="/admin/inquiries" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<InquiryManagement />} />
               </Route>
-              <Route path="/admin/site-settings" element={<AdminDashboard />}>
+              <Route path="/admin/site-settings" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<SiteSettingsManagement />} />
               </Route>
-              <Route path="/admin/gallery-videos" element={<AdminDashboard />}>
+              <Route path="/admin/gallery-videos" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<GalleryVideoManagement />} />
               </Route>
-              <Route path="/admin/testimonials" element={<AdminDashboard />}>
+              <Route path="/admin/testimonials" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}>
                 <Route index element={<TestimonialManagement />} />
               </Route>
             </Routes>

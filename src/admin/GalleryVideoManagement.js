@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
@@ -10,6 +11,7 @@ const GalleryVideoManagement = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
+    description: '',
     videoUrl: '',
     thumbnailUrl: '',
     order: 0,
@@ -26,15 +28,13 @@ const GalleryVideoManagement = () => {
   const fetchVideos = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/gallery-videos/admin`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.get(`/gallery-videos/admin`);
       if (response.data.success) {
-        setVideos(response.data.data);
+        setVideos(response.data.data || []);
       }
     } catch (error) {
       console.error('Error fetching gallery videos:', error);
+      toast.error('Failed to load gallery videos');
     } finally {
       setLoading(false);
     }
@@ -45,10 +45,13 @@ const GalleryVideoManagement = () => {
     setErrorMsg('');
     if (!formData.title || !formData.title.trim()) {
       setErrorMsg('Please enter a title');
+      toast.error('Please enter a title');
       return;
     }
     if (!videoFile && !(formData.videoUrl && formData.videoUrl.trim()) && !editingItem) {
-      setErrorMsg('Please either upload a video file OR paste a video URL (Cloudinary / YouTube / hosted .mp4 link)');
+      const msg = 'Please either upload a video file OR paste a video URL (Cloudinary / YouTube / hosted .mp4 link)';
+      setErrorMsg(msg);
+      toast.error(msg);
       return;
     }
     const submitData = new FormData();
@@ -59,19 +62,14 @@ const GalleryVideoManagement = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
       let response;
       if (editingItem) {
-        response = await axios.put(`/gallery-videos/${editingItem._id}`, submitData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        response = await api.put(`/gallery-videos/${editingItem._id}`, submitData);
       } else {
-        response = await axios.post(`/gallery-videos`, submitData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        response = await api.post(`/gallery-videos`, submitData);
       }
       if (response.data.success) {
-        alert(editingItem ? 'Gallery video updated!' : 'Gallery video added!');
+        toast.success(editingItem ? 'Gallery video updated!' : 'Gallery video added!');
         fetchVideos();
         resetForm();
         setShowForm(false);
@@ -82,9 +80,9 @@ const GalleryVideoManagement = () => {
         error?.response?.data?.error ||
         error?.message ||
         'Unknown server error';
-      console.error('Error saving gallery video:', error, '| server said:', serverMessage);
+      console.error('Error saving gallery video:', error);
       setErrorMsg(`Error saving gallery video: ${serverMessage}`);
-      alert(`Error saving gallery video: ${serverMessage}`);
+      toast.error(`Error: ${serverMessage}`);
     } finally {
       setLoading(false);
     }
@@ -93,13 +91,12 @@ const GalleryVideoManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this gallery video?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/gallery-videos/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/gallery-videos/${id}`);
+        toast.success('Gallery video deleted');
         fetchVideos();
       } catch (error) {
         console.error('Error deleting gallery video:', error);
+        toast.error('Failed to delete gallery video');
       }
     }
   };

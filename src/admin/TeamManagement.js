@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
@@ -33,13 +34,11 @@ const TeamManagement = () => {
   const fetchTeam = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/team`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setTeam(response.data.data);
+      const response = await api.get(`/team`);
+      setTeam(response.data.data || []);
     } catch (error) {
       console.error('Error fetching team:', error);
+      toast.error('Failed to load team members');
     } finally {
       setLoading(false);
     }
@@ -56,32 +55,22 @@ const TeamManagement = () => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
       let response;
-      
       if (editingMember) {
-        response = await axios.put(`/team/${editingMember._id}`, submitData, {
-          headers: { 
-            Authorization: `Bearer ${token}`
-          }
-        });
+        response = await api.put(`/team/${editingMember._id}`, submitData);
       } else {
-        response = await axios.post(`/team`, submitData, {
-          headers: { 
-            Authorization: `Bearer ${token}`
-          }
-        });
+        response = await api.post(`/team`, submitData);
       }
       
       if (response.data.success) {
         fetchTeam();
         resetForm();
         setShowForm(false);
-        alert(editingMember ? 'Team member updated!' : 'Team member added!');
+        toast.success(editingMember ? 'Team member updated successfully!' : 'Team member added successfully!');
       }
     } catch (error) {
       console.error('Error saving team member:', error);
-      alert('Error saving team member');
+      toast.error(error.response?.data?.message || 'Error saving team member');
     } finally {
       setLoading(false);
     }
@@ -90,13 +79,12 @@ const TeamManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this team member?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/team/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/team/${id}`);
+        toast.success('Team member deleted');
         fetchTeam();
       } catch (error) {
         console.error('Error deleting team member:', error);
+        toast.error('Failed to delete team member');
       }
     }
   };

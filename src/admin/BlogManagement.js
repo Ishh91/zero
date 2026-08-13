@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import './Admin.css';
 
 const BlogManagement = () => {
@@ -34,46 +35,47 @@ const BlogManagement = () => {
     ],
   };
 
+  const categories = [
+    'Marketing',
+    'Content Strategy',
+    'Video Production',
+    'Social Media',
+    'Case Studies',
+    'Industry Insights',
+  ];
+
   useEffect(() => {
     fetchBlogs();
   }, []);
 
   const fetchBlogs = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/blogs/admin/all`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setBlogs(response.data.data);
+      const response = await api.get(`/blogs/admin/all`);
+      setBlogs(response.data.data || []);
     } catch (error) {
       console.error('Error fetching blogs:', error);
+      toast.error('Failed to load blogs');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitting blog with data:', formData);
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      
       if (editingBlog) {
-        await axios.put(`/blogs/${editingBlog._id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.put(`/blogs/${editingBlog._id}`, formData);
+        toast.success('Blog updated successfully!');
       } else {
-        await axios.post(`/blogs`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.post(`/blogs`, formData);
+        toast.success('Blog published successfully!');
       }
       fetchBlogs();
       setShowForm(false);
       resetForm();
     } catch (error) {
       console.error('Full error saving blog:', error);
-      console.error('Error response:', error.response);
       const errorMsg = error.response?.data?.message || error.message || 'Error saving blog';
-      alert(`Error: ${errorMsg}`);
+      toast.error(`Error: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
@@ -82,13 +84,12 @@ const BlogManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this blog?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/blogs/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/blogs/${id}`);
+        toast.success('Blog deleted successfully');
         fetchBlogs();
       } catch (error) {
         console.error('Error deleting blog:', error);
+        toast.error('Failed to delete blog');
       }
     }
   };
@@ -129,14 +130,17 @@ const BlogManagement = () => {
     setTagInput('');
   };
 
-  const addTag = () => {
-    if (tagInput && !formData.tags.includes(tagInput)) {
-      setFormData({ ...formData, tags: [...formData.tags, tagInput] });
+  const handleAddTag = (e) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+      e.preventDefault();
+      if (!formData.tags.includes(tagInput.trim())) {
+        setFormData({ ...formData, tags: [...formData.tags, tagInput.trim()] });
+      }
       setTagInput('');
     }
   };
 
-  const removeTag = (tag) => {
+  const handleRemoveTag = (tag) => {
     setFormData({ ...formData, tags: formData.tags.filter(t => t !== tag) });
   };
 
@@ -148,18 +152,13 @@ const BlogManagement = () => {
     uploadFormData.append('image', file);
     
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.post(`/media`, uploadFormData, {
-        headers: { 
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await api.post(`/media`, uploadFormData);
       setFormData(prev => ({ ...prev, featuredImage: response.data.data.url }));
-      alert('Image uploaded successfully');
+      toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Error uploading image:', error);
       const errorMsg = error.response?.data?.message || error.message || 'Error uploading image';
-      alert(`Error: ${errorMsg}`);
+      toast.error(`Error: ${errorMsg}`);
     }
   };
 

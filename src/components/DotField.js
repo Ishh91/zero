@@ -104,9 +104,12 @@ const DotField = memo(({
 
     const speedInterval = setInterval(updateMouseSpeed, 20);
 
-    let frameCount = 0;
+    let isVisible = true;
+    let isTicking = true;
 
     function tick() {
+      if (!isTicking) return;
+
       frameCount++;
       const dots = dotsRef.current;
       const m = mouseRef.current;
@@ -199,13 +202,43 @@ const DotField = memo(({
       }
 
       ctx.fill();
-
       rafRef.current = requestAnimationFrame(tick);
     }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && !document.hidden) {
+          if (!isTicking) {
+            isTicking = true;
+            rafRef.current = requestAnimationFrame(tick);
+          }
+        } else {
+          isTicking = false;
+          cancelAnimationFrame(rafRef.current);
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(canvas.parentElement || canvas);
+
+    const handleVisibility = () => {
+      if (document.hidden || !isVisible) {
+        isTicking = false;
+        cancelAnimationFrame(rafRef.current);
+      } else {
+        if (!isTicking) {
+          isTicking = true;
+          rafRef.current = requestAnimationFrame(tick);
+        }
+      }
+    };
 
     doResize();
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', onMouseMove, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibility);
     rafRef.current = requestAnimationFrame(tick);
 
     rebuildRef.current = () => {
@@ -214,11 +247,14 @@ const DotField = memo(({
     };
 
     return () => {
+      isTicking = false;
       cancelAnimationFrame(rafRef.current);
       clearInterval(speedInterval);
       clearTimeout(resizeTimer);
+      observer.disconnect();
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 

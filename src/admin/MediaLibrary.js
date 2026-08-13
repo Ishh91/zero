@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import './Admin.css';
 
 const MediaLibrary = () => {
@@ -16,14 +17,13 @@ const MediaLibrary = () => {
   const fetchMedia = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/media`, {
-        params: { type: filter },
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await api.get(`/media`, {
+        params: { type: filter }
       });
-      setMedia(response.data.data);
+      setMedia(response.data.data || []);
     } catch (error) {
       console.error('Error fetching media:', error);
+      toast.error('Failed to load media');
     } finally {
       setLoading(false);
     }
@@ -37,18 +37,14 @@ const MediaLibrary = () => {
     
     setUploading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      await axios.post(`/media`, formData, {
-        headers: { 
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await api.post(`/media`, formData);
+      toast.success('Media uploaded successfully');
       fetchMedia();
       setSelectedFile(null);
     } catch (error) {
       console.error('Error uploading media:', error);
-      console.error('Error response:', error.response?.data);
-      alert(`Error uploading file: ${error.response?.data?.message || error.message}`);
+      const errMsg = error.response?.data?.message || error.message || 'Error uploading file';
+      toast.error(`Error: ${errMsg}`);
     } finally {
       setUploading(false);
     }
@@ -57,20 +53,19 @@ const MediaLibrary = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this media?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/media/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/media/${id}`);
+        toast.success('Media deleted successfully');
         fetchMedia();
       } catch (error) {
         console.error('Error deleting media:', error);
+        toast.error('Failed to delete media');
       }
     }
   };
 
   const copyToClipboard = (url) => {
     navigator.clipboard.writeText(url);
-    alert('URL copied to clipboard');
+    toast.info('URL copied to clipboard');
   };
 
   return (

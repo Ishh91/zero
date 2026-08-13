@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import './Admin.css';
 
 const InquiryManagement = () => {
@@ -14,13 +15,11 @@ const InquiryManagement = () => {
   const fetchInquiries = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/inquiries`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setInquiries(response.data.data);
+      const response = await api.get(`/inquiries`);
+      setInquiries(response.data.data || []);
     } catch (error) {
       console.error('Error fetching inquiries:', error);
+      toast.error('Failed to load inquiries');
     } finally {
       setLoading(false);
     }
@@ -28,14 +27,12 @@ const InquiryManagement = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      const token = localStorage.getItem('adminToken');
-      await axios.put(`/inquiries/${id}/status`, 
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put(`/inquiries/${id}/status`, { status });
+      toast.success(`Inquiry marked as ${status}`);
       fetchInquiries();
     } catch (error) {
       console.error('Error updating status:', error);
+      toast.error('Failed to update inquiry status');
     }
   };
 

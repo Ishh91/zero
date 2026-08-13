@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
@@ -9,19 +10,16 @@ const TestimonialManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    clientName: '',
-    clientRole: '',
+    name: '',
+    role: '',
     company: '',
+    companyRole: '',
     content: '',
+    clientType: 'creator',
+    avatarUrl: '',
     rating: 5,
-    imageUrl: '',
-    videoUrl: '',
-    isVideo: false,
-    metrics: {
-      reach: '',
-      engagement: '',
-      leads: '',
-    },
+    order: 0,
+    featured: false,
     isActive: true,
   });
 
@@ -32,13 +30,11 @@ const TestimonialManagement = () => {
   const fetchTestimonials = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/testimonials?all=true`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setTestimonials(response.data.data);
+      const response = await api.get(`/testimonials?all=true`);
+      setTestimonials(response.data.data || []);
     } catch (error) {
       console.error('Error fetching testimonials:', error);
+      toast.error('Failed to load testimonials');
     } finally {
       setLoading(false);
     }
@@ -49,34 +45,22 @@ const TestimonialManagement = () => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
       let response;
-      
       if (editingTestimonial) {
-        response = await axios.put(`/testimonials/${editingTestimonial._id}`, formData, {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        response = await api.put(`/testimonials/${editingTestimonial._id}`, formData);
       } else {
-        response = await axios.post(`/testimonials`, formData, {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        response = await api.post(`/testimonials`, formData);
       }
       
       if (response.data.success) {
         fetchTestimonials();
         resetForm();
         setShowForm(false);
-        alert(editingTestimonial ? 'Testimonial updated!' : 'Testimonial added!');
+        toast.success(editingTestimonial ? 'Testimonial updated successfully!' : 'Testimonial added successfully!');
       }
     } catch (error) {
       console.error('Error saving testimonial:', error);
-      alert('Error saving testimonial: ' + (error.response?.data?.message || error.message));
+      toast.error('Error saving testimonial: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }
@@ -85,13 +69,12 @@ const TestimonialManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this testimonial?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/testimonials/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/testimonials/${id}`);
+        toast.success('Testimonial deleted');
         fetchTestimonials();
       } catch (error) {
         console.error('Error deleting testimonial:', error);
+        toast.error('Failed to delete testimonial');
       }
     }
   };

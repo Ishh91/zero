@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import './Admin.css';
 
 const AdminLogin = ({ setIsAuthenticated }) => {
@@ -16,7 +17,7 @@ const AdminLogin = ({ setIsAuthenticated }) => {
     setError('');
     
     try {
-      const response = await axios.post(`/auth/login`, {
+      const response = await api.post(`/auth/login`, {
         email,
         password
       });
@@ -24,11 +25,14 @@ const AdminLogin = ({ setIsAuthenticated }) => {
       if (response.data.success) {
         localStorage.setItem('adminToken', response.data.token);
         localStorage.setItem('adminUser', JSON.stringify(response.data.user));
-        setIsAuthenticated(true);
+        if (setIsAuthenticated) setIsAuthenticated(true);
+        toast.success('Welcome back, Admin!');
         navigate('/admin/dashboard');
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Login failed');
+      const msg = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

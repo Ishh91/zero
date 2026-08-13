@@ -1,52 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import './Admin.css';
 
 const CaseStudyManagement = () => {
   const [caseStudies, setCaseStudies] = useState([]);
   const [editingCaseStudy, setEditingCaseStudy] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
     client: '',
     industry: '',
-    engagementType: '',
-    coreChallenge: '',
-    deliveryModel: '',
-    status: 'Live in production',
-    technicalStack: [],
-    challengeDescription: '',
-    whatWeBuilt: '',
-    keyCapabilities: [],
-    technicalApproach: '',
-    metrics: {
-      metric1: { value: '', label: '' },
-      metric2: { value: '', label: '' },
-      metric3: { value: '', label: '' }
+    challenge: '',
+    solution: '',
+    results: {
+      reach: '',
+      engagement: '',
+      leads: '',
     },
+    technicalStack: [],
+    keyCapabilities: [],
+    executionStages: [
+      { stage: '1', title: 'Strategy & Architecture', description: '' },
+      { stage: '2', title: 'Implementation & Integration', description: '' },
+      { stage: '3', title: 'Optimization & Scaling', description: '' },
+    ],
     testimonial: { quote: '', author: '' },
     featuredImage: '',
     featured: false,
     published: true,
-    seoTitle: '',
-    seoDescription: '',
   });
   const [techStackInput, setTechStackInput] = useState('');
   const [keyCapabilitiesInput, setKeyCapabilitiesInput] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['link', 'image', 'video'],
-      ['clean']
-    ],
-  };
 
   useEffect(() => {
     fetchCaseStudies();
@@ -54,40 +43,32 @@ const CaseStudyManagement = () => {
 
   const fetchCaseStudies = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/case-studies/admin/all`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCaseStudies(response.data.data);
+      const response = await api.get(`/case-studies/admin/all`);
+      setCaseStudies(response.data.data || []);
     } catch (error) {
       console.error('Error fetching case studies:', error);
+      toast.error('Failed to load case studies');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitting case study with data:', formData);
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      
       if (editingCaseStudy) {
-        await axios.put(`/case-studies/${editingCaseStudy._id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.put(`/case-studies/${editingCaseStudy._id}`, formData);
+        toast.success('Case study updated successfully!');
       } else {
-        await axios.post(`/case-studies`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.post(`/case-studies`, formData);
+        toast.success('Case study created successfully!');
       }
       fetchCaseStudies();
       setShowForm(false);
       resetForm();
     } catch (error) {
       console.error('Full error saving case study:', error);
-      console.error('Error response:', error.response);
       const errorMsg = error.response?.data?.message || error.message || 'Error saving case study';
-      alert(`Error: ${errorMsg}`);
+      toast.error(`Error: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
@@ -96,13 +77,12 @@ const CaseStudyManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this case study?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/case-studies/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/case-studies/${id}`);
+        toast.success('Case study deleted');
         fetchCaseStudies();
       } catch (error) {
         console.error('Error deleting case study:', error);
+        toast.error('Failed to delete case study');
       }
     }
   };
@@ -161,35 +141,62 @@ const CaseStudyManagement = () => {
       },
       testimonial: { quote: '', author: '' },
       featuredImage: '',
+      challenge: '',
+      solution: '',
+      creativeExecution: '',
+      metrics: [],
+      keyTakeaways: [],
+      testimonial: {
+        quote: '',
+        author: '',
+        role: '',
+        company: '',
+        avatarUrl: '',
+      },
+      relatedCaseStudies: [],
       featured: false,
-      published: true,
+      order: 0,
+      isActive: true,
       seoTitle: '',
       seoDescription: '',
     });
-    setTechStackInput('');
-    setKeyCapabilitiesInput('');
+    setMetricInput({ label: '', value: '', icon: '' });
+    setTakeawayInput('');
   };
 
-  const addTechStack = () => {
-    if (techStackInput && !formData.technicalStack.includes(techStackInput)) {
-      setFormData({ ...formData, technicalStack: [...formData.technicalStack, techStackInput] });
-      setTechStackInput('');
+  const handleAddMetric = () => {
+    if (metricInput.label && metricInput.value) {
+      setFormData({
+        ...formData,
+        metrics: [...formData.metrics, metricInput],
+      });
+      setMetricInput({ label: '', value: '', icon: '' });
     }
   };
 
-  const removeTechStack = (tech) => {
-    setFormData({ ...formData, technicalStack: formData.technicalStack.filter(t => t !== tech) });
+  const handleRemoveMetric = (index) => {
+    setFormData({
+      ...formData,
+      metrics: formData.metrics.filter((_, i) => i !== index),
+    });
   };
 
-  const addKeyCapability = () => {
-    if (keyCapabilitiesInput && !formData.keyCapabilities.includes(keyCapabilitiesInput)) {
-      setFormData({ ...formData, keyCapabilities: [...formData.keyCapabilities, keyCapabilitiesInput] });
-      setKeyCapabilitiesInput('');
+  const handleAddTakeaway = (e) => {
+    if (e.key === 'Enter' && takeawayInput.trim()) {
+      e.preventDefault();
+      setFormData({
+        ...formData,
+        keyTakeaways: [...formData.keyTakeaways, takeawayInput.trim()],
+      });
+      setTakeawayInput('');
     }
   };
 
-  const removeKeyCapability = (capability) => {
-    setFormData({ ...formData, keyCapabilities: formData.keyCapabilities.filter(c => c !== capability) });
+  const handleRemoveTakeaway = (index) => {
+    setFormData({
+      ...formData,
+      keyTakeaways: formData.keyTakeaways.filter((_, i) => i !== index),
+    });
   };
 
   const handleImageUpload = async (e) => {
@@ -200,18 +207,13 @@ const CaseStudyManagement = () => {
     uploadFormData.append('image', file);
     
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.post(`/media`, uploadFormData, {
-        headers: { 
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await api.post(`/media`, uploadFormData);
       setFormData(prev => ({ ...prev, featuredImage: response.data.data.url }));
-      alert('Image uploaded successfully');
+      toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Error uploading image:', error);
       const errorMsg = error.response?.data?.message || error.message || 'Error uploading image';
-      alert(`Error: ${errorMsg}`);
+      toast.error(`Error: ${errorMsg}`);
     }
   };
 

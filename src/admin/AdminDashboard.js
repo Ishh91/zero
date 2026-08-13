@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import './Admin.css';
 
 const AdminDashboard = () => {
@@ -24,11 +24,10 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/admin/stats`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setStats(response.data.data);
+      const response = await api.get(`/admin/stats`);
+      if (response.data.success && response.data.data) {
+        setStats(response.data.data);
+      }
     } catch (error) {
       console.error('Error fetching stats:', error);
     }

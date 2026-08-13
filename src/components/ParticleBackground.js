@@ -27,7 +27,11 @@ const ParticleBackground = () => {
       dAlpha: (Math.random() - 0.5) * 0.006,
     }));
 
+    let isRunning = true;
+
     const render = () => {
+      if (!isRunning) return;
+
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < count; i++) {
@@ -48,12 +52,24 @@ const ParticleBackground = () => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${p.hue}, 90%, 55%, ${Math.max(0, Math.min(1, p.alpha))})`;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = 'rgba(255, 153, 0, 0.4)';
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = 'rgba(255, 153, 0, 0.3)';
         ctx.fill();
       }
 
       animationFrameId = requestAnimationFrame(render);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        isRunning = false;
+        cancelAnimationFrame(animationFrameId);
+      } else {
+        if (!isRunning) {
+          isRunning = true;
+          animationFrameId = requestAnimationFrame(render);
+        }
+      }
     };
 
     const handleResize = () => {
@@ -63,11 +79,14 @@ const ParticleBackground = () => {
     };
 
     window.addEventListener('resize', handleResize, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     render();
 
     return () => {
+      isRunning = false;
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 

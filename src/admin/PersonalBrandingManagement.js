@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { toast } from '../components/UI/Toast';
 import { PLACEHOLDER_IMAGE } from '../utils/placeholders';
 import './Admin.css';
 
@@ -39,13 +40,11 @@ const PersonalBrandingManagement = () => {
   const fetchPersonalBrandings = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.get(`/personal-branding`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setPersonalBrandings(response.data.data);
+      const response = await api.get(`/personal-branding`);
+      setPersonalBrandings(response.data.data || []);
     } catch (error) {
       console.error('Error fetching personal brandings:', error);
+      toast.error('Failed to load personal branding data');
     } finally {
       setLoading(false);
     }
@@ -62,32 +61,22 @@ const PersonalBrandingManagement = () => {
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
       let response;
-      
       if (editingItem) {
-        response = await axios.put(`/personal-branding/${editingItem._id}`, submitData, {
-          headers: { 
-            Authorization: `Bearer ${token}`
-          }
-        });
+        response = await api.put(`/personal-branding/${editingItem._id}`, submitData);
       } else {
-        response = await axios.post(`/personal-branding`, submitData, {
-          headers: { 
-            Authorization: `Bearer ${token}`
-          }
-        });
+        response = await api.post(`/personal-branding`, submitData);
       }
       
       if (response.data.success) {
         fetchPersonalBrandings();
         resetForm();
         setShowForm(false);
-        alert(editingItem ? 'Personal branding updated!' : 'Personal branding added!');
+        toast.success(editingItem ? 'Personal branding updated successfully!' : 'Personal branding added successfully!');
       }
     } catch (error) {
       console.error('Error saving personal branding:', error);
-      alert('Error saving personal branding');
+      toast.error(error.response?.data?.message || 'Error saving personal branding');
     } finally {
       setLoading(false);
     }
@@ -96,13 +85,12 @@ const PersonalBrandingManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this personal branding?')) {
       try {
-        const token = localStorage.getItem('adminToken');
-        await axios.delete(`/personal-branding/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.delete(`/personal-branding/${id}`);
+        toast.success('Personal branding deleted');
         fetchPersonalBrandings();
       } catch (error) {
         console.error('Error deleting personal branding:', error);
+        toast.error('Failed to delete personal branding');
       }
     }
   };
