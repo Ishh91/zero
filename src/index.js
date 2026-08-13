@@ -23,7 +23,7 @@ const getApiBaseUrl = () => {
 };
 
 axios.defaults.baseURL = getApiBaseUrl();
-axios.defaults.timeout = 15000;
+axios.defaults.timeout = 60000;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

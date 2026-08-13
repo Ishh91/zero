@@ -16,58 +16,31 @@ import '../components/FAQ.css';
 
 const DEFAULT_TEAM = [
   {
-    _id: 1,
-    name: "Creative Director",
+    _id: "6a41405907138ed5c91cc663",
+    name: "Tushar",
     role: "Founder & Creative Director",
-    bio: "Brand strategy, creative vision, and client leadership with over a decade of experience.",
-    expertise: ["Brand Strategy", "Creative Direction", "Marketing Vision"],
-    imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-    socialLinks: { linkedin: "#", instagram: "#" }
+    bio: "Leading brand strategy, creative direction, and marketing vision with over a decade of experience in building digital brands.",
+    expertise: ["Brand Strategy", "Creative Direction", "Marketing Vision", "Client Communication"],
+    imageUrl: "https://res.cloudinary.com/drzsxgadl/image/upload/v1782663962/zero-cineviv/team/sw5uup0yqwufkqehfpxk.jpg",
+    socialLinks: { linkedin: "#", instagram: "#", twitter: "#" }
   },
   {
-    _id: 2,
-    name: "Content Strategist",
-    role: "Content Strategist",
-    bio: "Content planning, viral strategy, and audience psychology expert.",
-    expertise: ["Content Strategy", "Viral Strategy", "Audience Psychology"],
-    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-    socialLinks: { linkedin: "#", instagram: "#" }
+    _id: "6a41405907138ed5c91cc664",
+    name: "Shanviv Rudra",
+    role: "Co-Founder",
+    bio: "Expert in content planning, viral strategy, and audience psychology. Creates content systems that build attention and trust.",
+    expertise: ["Content Planning", "Viral Strategy", "Audience Psychology", "Social Media Direction"],
+    imageUrl: "https://res.cloudinary.com/drzsxgadl/image/upload/v1782664065/zero-cineviv/team/qut9mtqln5l5gebs67uu.jpg",
+    socialLinks: { linkedin: "#", instagram: "#", twitter: "#" }
   },
   {
-    _id: 3,
-    name: "Cinematic Editor",
-    role: "Video Editor & Cinematographer",
-    bio: "Reel editing, cinematic production, color grading, and motion design specialist.",
-    expertise: ["Video Editing", "Motion Design", "Color Grading"],
-    imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-    socialLinks: { linkedin: "#", instagram: "#" }
-  },
-  {
-    _id: 4,
-    name: "Performance Marketer",
-    role: "Performance Marketing Manager",
-    bio: "META ads, lead generation, and campaign optimization expert.",
-    expertise: ["META Ads", "Lead Generation", "Analytics"],
-    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-    socialLinks: { linkedin: "#", instagram: "#" }
-  },
-  {
-    _id: 5,
-    name: "Social Manager",
-    role: "Social Media Manager",
-    bio: "Community management, engagement strategy, and platform growth.",
-    expertise: ["Platform Growth", "Community Engagement", "Content Distribution"],
-    imageUrl: "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-    socialLinks: { linkedin: "#", instagram: "#" }
-  },
-  {
-    _id: 6,
-    name: "Producer",
-    role: "Production Manager",
-    bio: "Video production coordination, creative execution, and quality assurance.",
-    expertise: ["Video Production", "Project Coordination", "Quality Control"],
-    imageUrl: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-    socialLinks: { linkedin: "#", instagram: "#" }
+    _id: "6a41405907138ed5c91cc665",
+    name: "Ketan Koparkar",
+    role: "Cinematic Editor, Creative Producer",
+    bio: "Trained at Michigan State University for TV/Movie screenwriting, winning him a 1497 Screenwriting Fellowship. Established channels like Cine Vicchar with over 200k+ followers.",
+    expertise: ["Reel Editing", "Cinematic Production", "Color Grading", "Motion Visuals"],
+    imageUrl: "https://res.cloudinary.com/drzsxgadl/image/upload/v1782664148/zero-cineviv/team/wzquuteaaoze7lhlapdg.jpg",
+    socialLinks: { linkedin: "#", instagram: "#", twitter: "#" }
   }
 ];
 
@@ -80,10 +53,22 @@ const HomePage = () => {
   );
 
   useEffect(() => {
+    fetchTeam();
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const fetchTeam = async () => {
+    try {
+      const response = await axios.get('/team');
+      if (response.data && response.data.success && Array.isArray(response.data.data) && response.data.data.length > 0) {
+        setTeam(response.data.data);
+      }
+    } catch (error) {
+      console.warn('Using default team data:', error.message);
+    }
+  };
   const clients = [
     'TechFlow', 'BrandX', 'CreativeHub', 'Digital Motion',
     'Aurora Studio', 'NextGen Media', 'Velocity Brand', 'Pixel Perfect',
@@ -196,10 +181,6 @@ const HomePage = () => {
     { year: "2024", title: "Global Expansion", description: "Expanded services to international markets" }
   ];
 
-  useEffect(() => {
-    fetchTeam();
-  }, []);
-
   // Close popup on scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -211,17 +192,6 @@ const HomePage = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  const fetchTeam = async () => {
-    try {
-      const response = await axios.get(`/team`);
-      if (response.data.data && response.data.data.length > 0) {
-        setTeam(response.data.data);
-      }
-    } catch (error) {
-      // Silently keep default team data if server is waking up
-    }
-  };
 
   const activeMember = selectedMember;
 
@@ -644,7 +614,7 @@ const HomePage = () => {
                       transition={{ delay: index * 0.15 }}
                     >
                       <div
-                        className={`tree-avatar ${activeMember === member._id ? 'active' : ''}`}
+                        className={`tree-avatar ${selectedMember === member._id ? 'active' : ''}`}
                         onClick={() => {
                           if (selectedMember === member._id) {
                             setSelectedMember(null);
@@ -683,7 +653,7 @@ const HomePage = () => {
                       transition={{ delay: 0.45 + index * 0.15 }}
                     >
                       <div
-                        className={`tree-avatar ${activeMember === member._id ? 'active' : ''}`}
+                        className={`tree-avatar ${selectedMember === member._id ? 'active' : ''}`}
                         onClick={() => {
                           if (selectedMember === member._id) {
                             setSelectedMember(null);
@@ -711,7 +681,7 @@ const HomePage = () => {
                       transition={{ delay: 0.75 }}
                     >
                       <div
-                        className={`tree-avatar root-avatar ${activeMember === team[5]._id ? 'active' : ''}`}
+                        className={`tree-avatar root-avatar ${selectedMember === team[5]._id ? 'active' : ''}`}
                         onClick={() => {
                           if (selectedMember === team[5]._id) {
                             setSelectedMember(null);
@@ -733,7 +703,7 @@ const HomePage = () => {
 
               {/* Popup Card at the end of tree structure */}
               <AnimatePresence>
-                {activeMember && (
+                {selectedMember && (
                   <>
                     <div className="modal-overlay" onClick={() => setSelectedMember(null)} />
                     <motion.div
@@ -743,28 +713,26 @@ const HomePage = () => {
                       exit={{ opacity: 0, scale: 0.8, y: 30 }}
                       transition={{ type: "spring", stiffness: 250, damping: 25 }}
                     >
-                      {selectedMember && (
-                        <button
-                          className="popup-close"
-                          onClick={() => setSelectedMember(null)}
-                        >
-                          <i className="fas fa-times"></i>
-                        </button>
-                      )}
+                      <button
+                        className="popup-close"
+                        onClick={() => setSelectedMember(null)}
+                      >
+                        <i className="fas fa-times"></i>
+                      </button>
 
                       <div className="popup-glow"></div>
 
                       <div className="popup-image">
-                        <img src={team.find(m => m._id === activeMember)?.imageUrl} alt={team.find(m => m._id === activeMember)?.name} />
+                        <img src={team.find(m => m._id === selectedMember)?.imageUrl} alt={team.find(m => m._id === selectedMember)?.name} />
                       </div>
 
                       <div className="popup-content">
-                        <h3 className="popup-name">{team.find(m => m._id === activeMember)?.name}</h3>
-                        <p className="popup-role">{team.find(m => m._id === activeMember)?.role}</p>
-                        <p className="popup-bio">{team.find(m => m._id === activeMember)?.bio}</p>
+                        <h3 className="popup-name">{team.find(m => m._id === selectedMember)?.name}</h3>
+                        <p className="popup-role">{team.find(m => m._id === selectedMember)?.role}</p>
+                        <p className="popup-bio">{team.find(m => m._id === selectedMember)?.bio}</p>
 
                         <div className="popup-expertise">
-                          {team.find(m => m._id === activeMember)?.expertise?.map((skill, i) => (
+                          {team.find(m => m._id === selectedMember)?.expertise?.map((skill, i) => (
                             <span key={i} className="expertise-tag">{skill}</span>
                           ))}
                         </div>
