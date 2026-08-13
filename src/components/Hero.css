@@ -49,10 +49,10 @@ body {
   transform: translate(-50%, -50%);
   min-width: 100%;
   min-height: 100%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  filter: brightness(0.5) contrast(1.1);
+  filter: brightness(0.65) contrast(1.08);
   z-index: 0;
   will-change: transform;
 }
@@ -63,9 +63,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at top left, rgba(255, 153, 0, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at bottom right, rgba(255, 204, 0, 0.08) 0%, transparent 50%),
-              linear-gradient(180deg, rgba(8,6,2,0.3) 0%, rgba(8,6,2,0.65) 100%);
+  background: radial-gradient(circle at center, rgba(11, 10, 7, 0.35) 0%, rgba(11, 10, 7, 0.75) 100%),
+              linear-gradient(180deg, rgba(11, 10, 7, 0.2) 0%, rgba(11, 10, 7, 0.8) 100%);
   z-index: 1;
   pointer-events: none;
 }

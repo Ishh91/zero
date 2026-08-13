@@ -1,6 +1,7 @@
 import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import defaultHeroVideo from '../assets/videos/hero.mp4';
 
 function debounce(func, wait) {
   let timeout;
@@ -262,7 +263,9 @@ class Media {
     if (this.video) {
       const videoEl = document.createElement('video');
       videoEl.src = this.video;
-      videoEl.crossOrigin = 'anonymous';
+      if (typeof this.video === 'string' && this.video.startsWith('http') && typeof window !== 'undefined' && !this.video.includes(window.location.host)) {
+        videoEl.crossOrigin = 'anonymous';
+      }
       videoEl.loop = true;
       videoEl.muted = true;
       videoEl.playsInline = true;
@@ -589,10 +592,10 @@ class App {
 }
 
 const DEFAULT_GALLERY_ITEMS = [
-  { image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop', text: 'Brand Storytelling' },
-  { image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop', text: 'Cinematic Visuals' },
-  { image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&fit=crop', text: 'Viral Content' },
-  { image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&h=600&fit=crop', text: 'Creative Direction' },
+  { video: defaultHeroVideo, text: 'Brand Storytelling' },
+  { video: defaultHeroVideo, text: 'Cinematic Visuals' },
+  { video: defaultHeroVideo, text: 'Viral Content' },
+  { video: defaultHeroVideo, text: 'Creative Direction' },
 ];
 
 export default function CircularGallery({
