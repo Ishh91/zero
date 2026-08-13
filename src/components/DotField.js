@@ -106,6 +106,7 @@ const DotField = memo(({
 
     let isVisible = true;
     let isTicking = true;
+    let frameCount = 0;
 
     function tick() {
       if (!isTicking) return;
